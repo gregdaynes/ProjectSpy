@@ -1,0 +1,16 @@
+<style>
+ps-sidebar {
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 0px 0 1px var(--color-gray-200);
+	padding-inline: var(--spacing-150);
+	gap: var(--spacing-125);
+}
+
+</style>
+
+<ps-sidebar>
+	{% include "ps-logo.njk" %}
+
+	{% include "ps-filetree.njk" %}
+</ps-sidebar>

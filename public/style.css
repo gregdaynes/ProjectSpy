@@ -1,0 +1,97 @@
+/**
+ * Variables
+ */
+
+:root {
+	--color-gray-100: #f8f9fa;
+	--color-gray-200: #e9ecef;
+	--color-gray-300: #dee2e6;
+	--color-gray-400: #ced4da;
+	--color-gray-500: #adb5bd;
+	--color-gray-600: #6c757d;
+	--color-gray-700: #495057;
+	--color-gray-800: #343a40;
+	--color-gray-900: #212529;
+
+	--spacing-25: 0.25rem;
+	--spacing-50: 0.5rem;
+	--spacing-100: 1rem;
+	--spacing-125: 1.25rem;
+	--spacing-150: 1.5rem;
+	--spacing-150: 1.75rem;
+	--spacing-200: 2rem;
+
+	--radius-25: 0.25rem;
+	--radius-50: 0.5rem;
+	--radius-100: 1rem;
+
+	--font-size-90: 0.9rem;
+	--font-size-100: 1rem;
+	--font-size-125: 1.25rem;
+	--font-size-200: 2rem;
+
+	--font-weight-light: 300;
+	--font-weight-normal: 400;
+	--font-weight-bold: 700;
+	--font-weight-heavy: 800;
+}
+
+
+/**
+ * Reset
+ */
+
+
+* {
+	font-weight: var(--font-weight-normal);
+
+	&, &::before, &::after {
+		box-sizing: border-box;
+	}
+}
+
+html {
+	font-size: 16px;
+}
+
+body {
+	font-family: sans-serif;
+	margin: 0;
+}
+
+
+/**
+ * Elements
+ */
+
+
+
+/**
+ * Objects / Layout
+ */
+
+main {
+	display: grid;
+	height: 100dvh;
+	grid-template-columns: 20% 80%;
+
+}
+
+
+/**
+ * Components
+ */
+
+ps-alert {
+	display: block;
+	background-color: red;
+	text-align: center;
+}
+
+
+/**
+ * Utilities
+ */
+
+
+
