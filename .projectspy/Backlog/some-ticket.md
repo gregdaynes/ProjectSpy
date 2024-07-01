@@ -13,5 +13,18 @@ This is my super awesome description of the think i need to do.
 - [ ] - scrumoji might work http://scrumoji.org
 - [ ] - what about just using 0-10 emojis
 - [ ] - a config override that is a list of tuples [icon, column name]. Order dependent
+- [ ] - what about just a folder structure
 - [ ] multiple projects? folders
 
+
+Project structure
+
+.
+/
+/Backlog/ticket.md
+/In-Progress/ticket.md
+/Done/ticket.md
+
+/Backlog/my-project/Backlog/ticket.md
+/Backlog/my-project/In-Progress/ticket.md
+/Backlog/my-project/Done/ticket.md

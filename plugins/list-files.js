@@ -4,13 +4,19 @@ import fp from 'fastify-plugin'
 
 export default fp(
   async function (fastify) {
-    fastify.addHook('onReady', function () {
+    fastify.addHook('onReady', await function () {
       const files = fastify.listFiles()
       const filesStripped = fastify.stripCommonPath(files)
       const fileTree = fastify.fileListToTree(filesStripped)
-      console.log('fileTree', JSON.stringify(fileTree, null, 2))
 
-      fastify.decorate('fileTree', fileTree)
+      const sortedFileTree = fastify.config.lanes
+      	.map((lane) => {
+      		return fileTree.find((file) => file.title === lane)
+      	})
+
+      console.log(sortedFileTree)
+
+      fastify.decorate('fileTree', sortedFileTree)
     })
 
     fastify.addHook('preHandler', function (request, reply, done) {
@@ -24,29 +30,13 @@ export default fp(
     fastify.decorate('listFiles', function (dirPath) {
       if (!dirPath) dirPath = fastify.config.dirPath
 
-      function getAllFiles (dirPath, arrayOfFiles) {
-        const files = fs.readdirSync(dirPath)
-
-        arrayOfFiles = arrayOfFiles || []
-
-        files.forEach(function (file) {
-          if (fs.statSync(dirPath + '/' + file).isDirectory()) {
-            arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles)
-          } else {
-            arrayOfFiles.push(path.join(import.meta.dirname, dirPath, '/', file))
-          }
-        })
-
-        return arrayOfFiles
-      }
-
-      return getAllFiles(dirPath, [])
+      return fs.globSync(path.join(process.cwd(), fastify.config.dirPath, '/**/*'))
     })
 
     fastify.decorate('stripCommonPath', function (files) {
       const dirPath = fastify.config.dirPath
 
-      return files.map(file => file.replace(path.join(import.meta.dirname, dirPath, '/'), ''))
+      return files.map(file => file.replace(path.join(process.cwd(), dirPath, '/'), ''))
     })
 
     fastify.decorate('fileListToTree', function (files) {
@@ -54,33 +44,23 @@ export default fp(
       const level = { result }
 
       files.forEach((path) => {
-        path.split('/').reduce((acc, fileName) => {
-          if (!acc[fileName]) {
-            acc[fileName] = { result: [] }
+        path.split('/').reduce((r, name, i, a) => {
+          if (!r[name]) {
+            r[name] = { result: [] }
 
-            // process fileName here
-            // 1) handle date
-            const [dateMatch] = fileName.match(/^\d{4}-\d{2}-\d{2}/) || []
-            const date = dateMatch ? new Date(dateMatch) : null
+            const title = name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
 
-            // 2) handle file extension
-            const [extMatch] = fileName.match(/\.[a-z]+$/) || []
-            const ext = extMatch ? extMatch.slice(1) : null
-
-            // 3) handle fileName name
-            const name = fileName.replace(/\.[a-z]+$/, '').replace(/^\d{4}-\d{2}-\d{2}/, '').replace(/-/g, ' ').trim()
-            console.log(name)
-
-            acc.result.push({ name, fileName, date, ext, children: acc[fileName].result })
+            r.result.push({ name, title, path, children: r[name].result })
           }
 
-          return acc[fileName]
+          return r[name]
         }, level)
       })
 
       return result
     })
   },
+
   {
     name: 'list-files',
     dependencies: ['application-config'],

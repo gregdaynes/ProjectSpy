@@ -4,9 +4,10 @@
 	<link href="/assets/style.css" rel="stylesheet" />
 </head>
 <body>
-	<main>
-		{% include "ps-sidebar.njk" %}
-		{% include "ps-main.njk" %}
-	</main>
+	<ps-header>
+		{% include "ps-logo.njk" %}
+	</ps-header>
+
+	{% include "ps-main.njk" %}
 </body>
 </html>

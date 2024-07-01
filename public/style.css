@@ -70,11 +70,10 @@ body {
  * Objects / Layout
  */
 
-main {
-	display: grid;
+body {
+	display: flex;
+	flex-direction: column;
 	height: 100dvh;
-	grid-template-columns: 20% 80%;
-
 }
 
 

@@ -14,4 +14,8 @@ export default fp(async function app (fastify, opts) {
   fastify.get('/', async (request, reply) => {
     return reply.render('base.njk')
   })
+
+  fastify.get('/:project/*', async (request, reply) => {
+    return reply.render('base.njk')
+  })
 })
