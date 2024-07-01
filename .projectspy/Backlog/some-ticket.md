@@ -5,7 +5,7 @@ This is my super awesome description of the think i need to do.
 
 - [ ] This is a subtask or something
 - [ ] think about making this as freeform as possible?
-- [ ] - Or do we just use json + editor.js
+- - [ ] Or do we just use json + editor.js
 - [ ] What about date information?
 - [ ] - Date created, Date modified from the OS might be good enough.
 - [ ] We'll need a status, where does that go? Frontmatter?

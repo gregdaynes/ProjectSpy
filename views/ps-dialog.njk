@@ -1,0 +1,66 @@
+<style>
+/* ::backdrop doesn't exist unless dialog opened with .showModal() */
+body:has(> dialog[open]) {
+	overflow: hidden;
+
+	&::before {
+		display: block;
+		content: '';
+		position: fixed;
+		inset: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		width: 100dvw;
+		height: 100dvh;
+		-webkit-backdrop-filter: blur(5px);
+		backdrop-filter: blur(5px);
+	}
+}
+
+dialog {
+	position: absolute;
+	inset: 0;
+
+	border-radius: var(--radius-100);
+	border: none;
+	box-shadow: 0 0 0 1px var(--color-gray-200), 0 0 15px 0 rgba(0, 0, 0, 0.3), 0 1px 5px 0 rgba(0, 0, 0, 0.1);
+	max-height: 90dvh;
+	max-width: 650px;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-100);
+
+	header {
+		display: flex;
+
+		h1 {
+			flex: 1;
+			margin: 0;
+			font-size: var(--font-size-150);
+			font-weight: var(--font-weight-bold);
+		}
+
+		form {
+			flex-shrink: 1;
+
+			button {
+				appearance: none;
+				border: none;
+				background-color: transparent;
+			}
+		}
+	}
+}
+</style>
+
+<dialog open>
+	<header>
+		<h1>{{ title }}</h1>
+
+		<form method="get" action="/">
+			<button>Close</button>
+		</form>
+	</header>
+
+	{{ content | safe }}
+</dialog>

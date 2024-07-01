@@ -14,8 +14,6 @@ export default fp(
       		return fileTree.find((file) => file.title === lane)
       	})
 
-      console.log(sortedFileTree)
-
       fastify.decorate('fileTree', sortedFileTree)
     })
 
