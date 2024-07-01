@@ -4,6 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"type": "module",
+	"bin": {
+		"projectspy": "./bin/server.js"
+	},
 	"scripts": {
 		"start": "fastify start -l debug -p 3000 -a 0.0.0.0 -P -o -w index.js",
 		"test": "eslint . && node --test",
