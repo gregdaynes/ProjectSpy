@@ -62,5 +62,18 @@ dialog {
 		</form>
 	</header>
 
+	<main>
 	{{ content | safe }}
+	</main>
+
+	<aside>
+		<form method="post" action="/update/{{ lane }}/{{ filename }}">
+			<select name="lane">
+				<option value="Backlog" {% if lane == "Backlog" %}selected="selected"{% endif %}>Backlog</option>
+				<option value="In_Progress" {% if lane == "In_Progress" %}selected="selected"{% endif %}>In Progress</option>
+				<option value="Done", {% if lane == "Done" %}selected="selected"{% endif %}>Done</option>
+			</select>
+			<button type="submit">Save</button>
+		</form>
+	</aside>
 </dialog>

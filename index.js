@@ -13,6 +13,8 @@ export default fp(async function app (fastify, opts) {
     options: structuredClone(opts),
   })
 
+  await fastify.register(import('@fastify/formbody'), opts)
+
   fastify.get('/', async (request, reply) => {
     return reply.render('base.njk')
   })
@@ -26,6 +28,39 @@ export default fp(async function app (fastify, opts) {
     const title = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
     reply.locals.title = title
     reply.locals.content = content
+    reply.locals.lane = lane
+    reply.locals.filename = filename
+
+    return reply.render('view.njk')
+  })
+
+  fastify.post('/update/:lane/:filename', async (request, reply) => {
+    let { lane, filename } = request.params
+    const filePath = join(process.cwd(), fastify.config.dirPath, lane, filename)
+    let fileContents = fs.readFileSync(filePath, 'utf8')
+
+    if (request.body.contents) {
+      // get the contents of the request
+      fileContents = request.body.contents
+      // write the new contents to the file
+      fs.writeFileSync(filePath, fileContents)
+    }
+
+    const content = marked.parse(fileContents)
+
+    // move the file if the lane has changed
+    if (lane !== request.body.lane) {
+      lane = request.body.lane
+      const newFilePath = join(process.cwd(), fastify.config.dirPath, lane, filename)
+      fs.writeFileSync(newFilePath, content)
+      fs.unlinkSync(filePath)
+    }
+
+    const title = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
+    reply.locals.title = title
+    reply.locals.content = content
+    reply.locals.lane = lane
+    reply.locals.filename = filename
 
     return reply.render('view.njk')
   })
