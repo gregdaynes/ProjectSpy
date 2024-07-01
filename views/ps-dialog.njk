@@ -13,6 +13,7 @@ body:has(> dialog[open]) {
 		height: 100dvh;
 		-webkit-backdrop-filter: blur(5px);
 		backdrop-filter: blur(5px);
+		z-index: calc(infinity);
 	}
 }
 
@@ -29,6 +30,7 @@ dialog {
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-100);
+		z-index: calc(infinity + 1);
 
 	header {
 		display: flex;
