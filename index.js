@@ -17,7 +17,7 @@ export default fp(async function app (fastify, opts) {
     return reply.render('base.njk')
   })
 
-  fastify.get('/task/:lane/:filename', async (request, reply) => {
+  fastify.get('/view/:lane/:filename', async (request, reply) => {
     const { lane, filename } = request.params
     const filePath = join(process.cwd(), fastify.config.dirPath, lane, filename)
     const fileContents = fs.readFileSync(filePath, 'utf8')
@@ -27,6 +27,6 @@ export default fp(async function app (fastify, opts) {
     reply.locals.title = title
     reply.locals.content = content
 
-    return reply.render('task.njk')
+    return reply.render('view.njk')
   })
 })
