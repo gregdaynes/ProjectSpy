@@ -52,7 +52,7 @@ export default fp(async function app (fastify, opts) {
     if (lane !== request.body.lane) {
       lane = request.body.lane
       const newFilePath = join(process.cwd(), fastify.config.dirPath, lane, filename)
-      fs.writeFileSync(newFilePath, content)
+      fs.writeFileSync(newFilePath, fileContents)
       fs.unlinkSync(filePath)
     }
 
