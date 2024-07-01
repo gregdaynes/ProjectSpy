@@ -13,6 +13,11 @@ export default fp(
 
     ;(async () => {
       for await (const { filename } of watcher) {
+        const lanes = fastify.config.lanes.map(([lane]) => lane)
+        if (!lanes.includes(filename.split('/')[0])) {
+          continue
+        }
+
         fastify.log.info('File changed: %s', filename)
         fastify.updateFileTree()
       }
@@ -39,9 +44,9 @@ export default fp(
       const fileTree = fastify.fileListToTree(filesStripped)
 
       const sortedFileTree = fastify.config.lanes
-      	.map((lane) => {
-      		return fileTree.find((file) => file.title === lane)
-      	})
+        .map(([lane, name]) => {
+          return fileTree.find((file) => file.path === lane)
+        })
 
       sharedFileTree = sortedFileTree
     })

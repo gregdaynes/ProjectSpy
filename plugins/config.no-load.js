@@ -5,9 +5,9 @@ export default fp(
     fastify.decorate('config', {
       dirPath: '.projectSpy',
       lanes: [
-        'Backlog',
-        'In Progress',
-        'Done',
+        ['backlog', 'Backlog'],
+        ['in-progress', 'In Progress'],
+        ['done', 'Done'],
       ],
     })
   },
