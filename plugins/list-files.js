@@ -1,10 +1,39 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import fp from 'fastify-plugin'
+import { watch } from 'node:fs/promises'
 
 export default fp(
   async function (fastify) {
-    fastify.addHook('onReady', await function () {
+    let sharedFileTree = []
+
+    const abortController = new AbortController()
+    const { signal } = abortController
+    const watcher = watch(path.join(process.cwd(), fastify.config.dirPath), { recursive: true, signal })
+
+    ;(async () => {
+      for await (const { filename } of watcher) {
+        fastify.log.info('File changed: %s', filename)
+        fastify.updateFileTree()
+      }
+    })()
+
+    fastify.addHook('onReady', function () {
+      fastify.updateFileTree()
+    })
+    fastify.addHook('preHandler', function (request, reply, done) {
+      reply.locals = Object.assign({}, reply.locals, {
+        fileTree: sharedFileTree,
+      })
+
+      done()
+    })
+
+    fastify.addHook('onClose', function () {
+      abortController.abort()
+    })
+
+    fastify.decorate('updateFileTree', function () {
       const files = fastify.listFiles()
       const filesStripped = fastify.stripCommonPath(files)
       const fileTree = fastify.fileListToTree(filesStripped)
@@ -14,15 +43,7 @@ export default fp(
       		return fileTree.find((file) => file.title === lane)
       	})
 
-      fastify.decorate('fileTree', sortedFileTree)
-    })
-
-    fastify.addHook('preHandler', function (request, reply, done) {
-      reply.locals = Object.assign({}, reply.locals, {
-        fileTree: fastify.fileTree,
-      })
-
-      done()
+      sharedFileTree = sortedFileTree
     })
 
     fastify.decorate('listFiles', function (dirPath) {
