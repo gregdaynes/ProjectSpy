@@ -57,7 +57,7 @@ dialog {
 
 <dialog open>
 	<header>
-		<h1>{{ title }}</h1>
+		<div>{{ task.filePath }}</div>
 
 		<form method="get" action="/">
 			<button>Close</button>
@@ -65,7 +65,7 @@ dialog {
 	</header>
 
 	<main>
-	{{ content | safe }}
+	{{ task.content | safe }}
 	</main>
 
 	<aside>

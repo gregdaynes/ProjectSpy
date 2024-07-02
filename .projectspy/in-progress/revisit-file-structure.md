@@ -9,10 +9,10 @@ Ideally a structure and parsing strategy is devised, selected, and implemented.
 Requirements
 ------------
 
-- [ ] Definition of Task - settle on a name
-- [ ] Defintiion of a task file strucure
-- [ ] Implement reasonably performant data structure
-- [ ] Tested
+- [x] Definition of Task - settle on a name
+- [x] Defintiion of a task file strucure
+- [x] Implement reasonably performant data structure
+- [x] Tested
 
 
 Tasks

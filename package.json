@@ -35,6 +35,7 @@
 		"fastify-plugin": "^4.5.1",
 		"fluent-json-schema": "^4.2.1",
 		"marked": "^13.0.1",
-		"nunjucks": "^3.2.4"
+		"nunjucks": "^3.2.4",
+		"thenby": "^1.3.4"
 	}
 }

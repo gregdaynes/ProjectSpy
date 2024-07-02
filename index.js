@@ -21,15 +21,16 @@ export default fp(async function app (fastify, opts) {
 
   fastify.get('/view/:lane/:filename', async (request, reply) => {
     const { lane, filename } = request.params
-    const filePath = join(process.cwd(), fastify.config.dirPath, lane, filename)
-    const fileContents = fs.readFileSync(filePath, 'utf8')
-    const content = marked.parse(fileContents)
 
-    const title = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-    reply.locals.title = title
-    reply.locals.content = content
-    reply.locals.lane = lane
-    reply.locals.filename = filename
+    const foundLane = reply.locals.taskLanes.find((taskLane) => taskLane.lane === lane)
+    const foundTask = foundLane.tasks.find((task) => task.relativePath === join(lane, filename))
+
+    reply.locals.task = {
+      ...foundTask,
+      content: foundTask.render(),
+      lane,
+      filePath: foundTask.relativePath,
+    }
 
     return reply.render('view.njk')
   })
