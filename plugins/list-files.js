@@ -60,10 +60,12 @@ export default fp(
 
       const sortedTasks = fastify.config.lanes
         .map(([lane, name]) => {
+          const tasks = sortedGroupedTasks.find(([groupLane]) => groupLane === lane)?.[1] || []
+
           return {
             name,
             lane,
-            tasks: sortedGroupedTasks.find(([groupLane]) => groupLane === lane)[1],
+            tasks,
           }
         })
 
