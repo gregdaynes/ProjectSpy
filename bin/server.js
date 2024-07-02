@@ -3,6 +3,7 @@
 // Read the .env file.
 import * as dotenv from 'dotenv'
 import { join } from 'path'
+import open from 'open'
 
 // Require the framework
 import Fastify from 'fastify'
@@ -38,9 +39,13 @@ app.addHook('onClose', async (instance, done) => {
 })
 
 // Start listening.
-app.listen({ port: process.env.PORT || 8080 }, (err) => {
-  if (err) {
-    app.log.error(err)
-    process.exit(1)
-  }
-})
+try {
+  await app.listen({ port: process.env.PORT || 8080 })
+
+  const { address, port } = app.addresses().find((address) => address.family === 'IPv4')
+
+  await open(`http://${address}:${port}`)
+} catch (err) {
+  app.log.error(err)
+  process.exit(1)
+}
