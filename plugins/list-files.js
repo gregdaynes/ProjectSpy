@@ -8,7 +8,7 @@ import firstBy from 'thenby'
 
 export default fp(
   async function (fastify) {
-    let sharedTaskLanes = []
+    let sharedTaskLanes = Promise.withResolvers()
 
     const abortController = new AbortController()
     const { signal } = abortController
@@ -21,24 +21,33 @@ export default fp(
           continue
         }
 
+        if (!sharedTaskLanes.promise) {
+          sharedTaskLanes = Promise.withResolvers()
+        }
+
         fastify.log.info('File changed: %s', filename)
         fastify.updateFileTree()
       }
     })()
 
-    fastify.addHook('onReady', function () {
-      fastify.updateFileTree()
+    fastify.addHook('onReady', async function () {
+      await fastify.updateFileTree()
     })
-    fastify.addHook('preHandler', function (request, reply, done) {
-      reply.locals = Object.assign({}, reply.locals, {
-        taskLanes: sharedTaskLanes,
-      })
 
-      done()
+    fastify.addHook('preHandler', async function (request, reply) {
+      reply.locals = Object.assign({}, reply.locals, {
+        taskLanes: await sharedTaskLanes.promise,
+      })
     })
 
     fastify.addHook('onClose', function () {
       abortController.abort()
+    })
+
+    fastify.decorate('futureTaskUpdate', async function () {
+      sharedTaskLanes = Promise.withResolvers()
+
+      return sharedTaskLanes.promise
     })
 
     fastify.decorate('updateFileTree', async function () {
@@ -58,7 +67,7 @@ export default fp(
           }
         })
 
-      sharedTaskLanes = sortedTasks
+      sharedTaskLanes.resolve(sortedTasks)
     })
 
     fastify.decorate('listFiles', function (dirPath) {

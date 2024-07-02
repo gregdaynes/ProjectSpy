@@ -51,18 +51,16 @@ export default fp(async function app (fastify, opts) {
 
     // move the file if the lane has changed
     if (lane !== request.body.lane) {
+      const fileUpdate = request.server.futureTaskUpdate()
+
       lane = request.body.lane
       const newFilePath = join(process.cwd(), fastify.config.dirPath, lane, filename)
       fs.writeFileSync(newFilePath, fileContents)
       fs.unlinkSync(filePath)
+
+      await fileUpdate
     }
 
-    const title = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-    reply.locals.title = title
-    reply.locals.content = content
-    reply.locals.lane = lane
-    reply.locals.filename = filename
-
-    return reply.render('view.njk')
+    return reply.redirect(`/view/${request.body.lane}/${filename}`)
   })
 })
