@@ -1,0 +1,42 @@
+{% from 'ps-card.njk' import card %}
+
+{% macro lane(item) %}
+<style>
+ps-lane {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--color-gray-200);
+	border-radius: var(--radius-100);
+	flex: 1;
+	min-width: 300px;
+	padding: var(--spacing-50);
+	padding-block-start: 0;
+	gap: var(--spacing-50);
+	overflow-y: scroll;
+}
+
+ps-lane-header {
+	padding: var(--spacing-100);
+	border-bottom: 1px solid var(--color-gray-200);
+	font-weight: var(--font-weight-bold);
+	margin: calc(var(--spacing-50) * -1);
+	margin-bottom: 0;
+	position: sticky;
+	top: 0;
+	background-color: var(--color-gray-100);
+	margin-block-end: var(--spacing-50);
+}
+</style>
+
+<ps-lane>
+	<ps-lane-header>
+		{{ item.name }}
+	</ps-lane-header>
+
+	{% if item.tasks.length %}
+		{% for task in item.tasks %}
+			{{ card(task) }}
+		{% endfor %}
+	{% endif %}
+</ps-lane>
+{% endmacro %}
