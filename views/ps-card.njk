@@ -1,0 +1,37 @@
+{% macro card(item) %}
+<style>
+ps-card {
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 0px 0 1px var(--color-gray-200);
+	border-radius: var(--radius-50);
+	padding: var(--spacing-100) var(--spacing-100);
+	gap: var(--spacing-50);
+	transition: background-color 0.2s;
+
+	&:hover {
+		box-shadow: 0 0px 0 1px var(--color-gray-300);
+		background-color: var(--color-gray-200);
+		cursor: pointer;
+	}
+
+	a {
+		text-decoration: none;
+		color: var(--color-gray-600);
+	}
+
+	h1, h2 {
+		font-size: var(--font-size-150);
+		font-weight: var(--font-weight-bold);
+	}
+}
+</style>
+
+<ps-card>
+	<a href="/view/{{ item.relativePath }}">
+		{{ item.titleHTML | safe }}
+
+		{{ item.descriptionHTML | safe }}
+	</a>
+</ps-card>
+{% endmacro %}
