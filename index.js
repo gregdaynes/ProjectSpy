@@ -22,8 +22,8 @@ export default fp(async function app (fastify, opts) {
   fastify.get('/view/:lane/:filename', async (request, reply) => {
     const { lane, filename } = request.params
 
-    const foundLane = reply.locals.taskLanes.find((taskLane) => taskLane.lane == lane)
-    const foundTask = foundLane.tasks.find((task) => task.relativePath == join(lane, filename))
+    const foundLane = reply.locals.taskLanes.find((taskLane) => taskLane.lane === lane)
+    const foundTask = foundLane.tasks.find((task) => task.relativePath === join(lane, filename))
 
     reply.locals.task = {
       ...foundTask,

@@ -36,7 +36,7 @@ test('Task File Implementation', async (t) => {
     await t.test('header style equals', async () => {
       const task = await TaskFactory(join(import.meta.dirname, './task-example-equals.md'), import.meta.dirname)
 
-      assert.equal(task.title, '# Test Task Example of File Reading')
+      assert.equal(task.title, '#  Test Task Example of File Reading')
       assert.equal(task.titleHTML, '<h1>Test Task Example of File Reading</h1>')
       assert.equal(task.render(), '<h1>Test Task Example of File Reading</h1>\n' +
                                   '<p>Example file for testing against</p>'
@@ -46,7 +46,7 @@ test('Task File Implementation', async (t) => {
     await t.test('header style hyphens', async () => {
       const task = await TaskFactory(join(import.meta.dirname, './task-example-hyphens.md'), import.meta.dirname)
 
-      assert.equal(task.title, '## Test Task Example of File Reading')
+      assert.equal(task.title, '##  Test Task Example of File Reading')
       assert.equal(task.titleHTML, '<h2>Test Task Example of File Reading</h2>')
       assert.equal(task.render(), '<h2>Test Task Example of File Reading</h2>\n' +
                                   '<p>Example file for testing against</p>'
