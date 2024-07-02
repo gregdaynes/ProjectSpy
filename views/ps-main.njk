@@ -51,31 +51,31 @@ ps-card {
 
 	}
 }
-
 </style>
 
 <ps-main>
 	{% macro card(item) %}
 		<ps-card>
-			<a href="/view/{{ item.path }}">{{ item.title }}</a>
+			<a href="/view/{{ item.relativePath }}">{{ item.titleHTML | safe }}</a>
+			<div>{{ item.descriptionHTML | safe }}</div>
 		</ps-card>
 	{% endmacro %}
 
 	{% macro lane(item) %}
 		<ps-lane>
 			<ps-lane-header>
-				{{ item.title }}
+				{{ item.name }}
 			</ps-lane-header>
 
-			{% if item.children.length %}
-				{% for child in item.children %}
-					{{ card(child) }}
+			{% if item.tasks.length %}
+				{% for task in item.tasks %}
+					{{ card(task) }}
 				{% endfor %}
 			{% endif %}
 		</ps-lane>
 	{% endmacro %}
 
-	{% for item in fileTree %}
+	{% for item in taskLanes %}
 		{{ lane(item) }}
 	{% endfor %}
 </ps-main>

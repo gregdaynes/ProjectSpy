@@ -1,11 +1,14 @@
 import fs from 'node:fs'
+import { stat } from 'node:fs/promises'
 import path from 'node:path'
 import fp from 'fastify-plugin'
 import { watch } from 'node:fs/promises'
+import TaskFactory from '../task.js'
+import firstBy from 'thenby'
 
 export default fp(
   async function (fastify) {
-    let sharedFileTree = []
+    let sharedTaskLanes = []
 
     const abortController = new AbortController()
     const { signal } = abortController
@@ -28,7 +31,7 @@ export default fp(
     })
     fastify.addHook('preHandler', function (request, reply, done) {
       reply.locals = Object.assign({}, reply.locals, {
-        fileTree: sharedFileTree,
+        taskLanes: sharedTaskLanes,
       })
 
       done()
@@ -38,17 +41,24 @@ export default fp(
       abortController.abort()
     })
 
-    fastify.decorate('updateFileTree', function () {
+    fastify.decorate('updateFileTree', async function () {
       const files = fastify.listFiles()
-      const filesStripped = fastify.stripCommonPath(files)
-      const fileTree = fastify.fileListToTree(filesStripped)
+      const tasks = await fastify.assembleTasks(files)
+      const groupedTasks = fastify.tasksToTree(tasks)
+      const sortedGroupedTasks = Object.entries(groupedTasks).map(([name, tasks]) => {
+        return [name, fastify.sortTasks(tasks)]
+      })
 
-      const sortedFileTree = fastify.config.lanes
+      const sortedTasks = fastify.config.lanes
         .map(([lane, name]) => {
-          return fileTree.find((file) => file.path === lane)
+          return {
+            name,
+            lane,
+            tasks: sortedGroupedTasks.find(([groupLane]) => groupLane === lane)[1],
+          }
         })
 
-      sharedFileTree = sortedFileTree
+      sharedTaskLanes = sortedTasks
     })
 
     fastify.decorate('listFiles', function (dirPath) {
@@ -57,31 +67,32 @@ export default fp(
       return fs.globSync(path.join(process.cwd(), fastify.config.dirPath, '/**/*'))
     })
 
-    fastify.decorate('stripCommonPath', function (files) {
-      const dirPath = fastify.config.dirPath
+    fastify.decorate('assembleTasks', async function (files) {
+      const tasks = []
 
-      return files.map(file => file.replace(path.join(process.cwd(), dirPath, '/'), ''))
+      for await (const file of files) {
+        const stats = await stat(file)
+
+        if (stats.isFile()) {
+          tasks.push(await TaskFactory(file, fastify.config.dirPath))
+        }
+      }
+
+      return tasks
     })
 
-    fastify.decorate('fileListToTree', function (files) {
-      const result = []
-      const level = { result }
-
-      files.forEach((path) => {
-        path.split('/').reduce((r, name, i, a) => {
-          if (!r[name]) {
-            r[name] = { result: [] }
-
-            const title = name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-
-            r.result.push({ name, title, path, children: r[name].result })
-          }
-
-          return r[name]
-        }, level)
+    fastify.decorate('tasksToTree', function (tasks) {
+      return Object.groupBy(tasks, (task) => {
+        return task.relativePath.split('/')[0]
       })
+    })
 
-      return result
+    fastify.decorate('sortTasks', function (tasks) {
+     	return tasks.sort(
+        firstBy((a, b) => a.priority - b.priority)
+          .thenBy((a, b) => a.manualOrder - b.manualOrder)
+          .thenBy((a, b) => a.modified - b.modified)
+      )
     })
   },
 
