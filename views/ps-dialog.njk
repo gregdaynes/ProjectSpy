@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	dialog.addEventListener('click', ({ target }) => {
 		target === dialog && dialog.close();
+		window.history.replaceState({}, '', '/');
 	});
 });
 </script>

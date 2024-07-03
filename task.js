@@ -12,6 +12,8 @@ export class Task {
     this.created = metadata.created
     this.modified = metadata.modified
     this.relativePath = metadata.relativePath
+    this.filename = metadata.filename
+    this.lane = metadata.lane
   }
 
   get titleHTML () {
@@ -41,7 +43,7 @@ export class Task {
     ;[title, this.priority] = this.#getPriority(title)
     ;[title, this.tags] = this.#getTags(title)
 
-    return [title.split('\n')[0].trim(), title.trim()]
+    return [title.split('\n')[0].replace('#', '').trim(), title.trim()]
   }
 
   #getManualOrder (title) {
@@ -91,9 +93,12 @@ export class Task {
 export default async function TaskFactory (filePath, dirPath) {
   const [title, description] = await getHeader(filePath)
   const { birthtime: created, mtime: modified } = await stat(filePath)
-  const relativePath = filePath.replace(join(process.cwd(), dirPath, '/'), '')
+  const relativePath = filePath.replace(join(dirPath, '/'), '')
+  const [_, lane, filename] = filePath.replace(dirPath, '').split('/')
 
-  return new Task(filePath, {
+  return new Task(join(process.cwd(), filePath), {
+    filename,
+    lane,
     title,
     description,
     created,
@@ -115,6 +120,7 @@ async function getHeader (filePath) {
     // done
     if (description) {
       rl.close()
+      resolve([title, description])
       return
     }
 

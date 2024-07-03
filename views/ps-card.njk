@@ -18,9 +18,6 @@ ps-card {
 	a {
 		text-decoration: none;
 		color: var(--color-gray-600);
-	}
-
-	h1, h2 {
 		font-size: var(--font-size-150);
 		font-weight: var(--font-weight-bold);
 	}
@@ -29,7 +26,7 @@ ps-card {
 
 <ps-card>
 	<a href="/view/{{ item.relativePath }}">
-		{{ item.titleHTML | safe }}
+		{{ item.title }}
 
 		{{ item.descriptionHTML | safe }}
 	</a>
