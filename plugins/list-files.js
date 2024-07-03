@@ -1,109 +1,62 @@
-import fs from 'node:fs'
-import { stat } from 'node:fs/promises'
-import path from 'node:path'
+import { stat, glob } from 'node:fs/promises'
+import { join } from 'node:path'
 import fp from 'fastify-plugin'
-import { watch } from 'node:fs/promises'
 import TaskFactory from '../task.js'
 import firstBy from 'thenby'
 
 export default fp(
   async function (fastify) {
-    let sharedTaskLanes = Promise.withResolvers()
-
-    const abortController = new AbortController()
-    const { signal } = abortController
-    const watcher = watch(path.join(process.cwd(), fastify.config.dirPath), { recursive: true, signal })
-
-    ;(async () => {
-      for await (const { filename } of watcher) {
-        const lanes = fastify.config.lanes.map(([lane]) => lane)
-        if (!lanes.includes(filename.split('/')[0])) {
-          continue
-        }
-
-        if (!sharedTaskLanes.promise) {
-          sharedTaskLanes = Promise.withResolvers()
-        }
-
-        fastify.log.info('File changed: %s', filename)
-        fastify.updateFileTree()
-      }
-    })()
-
-    fastify.addHook('onReady', async function () {
-      await fastify.updateFileTree()
-    })
-
-    fastify.addHook('preHandler', async function (request, reply) {
-      reply.locals = Object.assign({}, reply.locals, {
-        taskLanes: await sharedTaskLanes.promise,
-      })
-    })
-
-    fastify.addHook('onClose', function () {
-      abortController.abort()
-    })
-
-    fastify.decorate('futureTaskUpdate', async function () {
-      sharedTaskLanes = Promise.withResolvers()
-
-      return sharedTaskLanes.promise
-    })
-
-    fastify.decorate('updateFileTree', async function () {
-      const files = fastify.listFiles()
-      const tasks = await fastify.assembleTasks(files)
-      const groupedTasks = fastify.tasksToTree(tasks)
-      const sortedGroupedTasks = Object.entries(groupedTasks).map(([name, tasks]) => {
-        return [name, fastify.sortTasks(tasks)]
-      })
-
-      const sortedTasks = fastify.config.lanes
-        .map(([lane, name]) => {
-          const tasks = sortedGroupedTasks.find(([groupLane]) => groupLane === lane)?.[1] || []
-
-          return {
-            name,
-            lane,
-            tasks,
-          }
-        })
-
-      sharedTaskLanes.resolve(sortedTasks)
-    })
-
-    fastify.decorate('listFiles', function (dirPath) {
-      if (!dirPath) dirPath = fastify.config.dirPath
-
-      return fs.globSync(path.join(process.cwd(), fastify.config.dirPath, '/**/*'))
-    })
-
-    fastify.decorate('assembleTasks', async function (files) {
-      const tasks = []
-
-      for await (const file of files) {
-        const stats = await stat(file)
-
-        if (stats.isFile()) {
-          tasks.push(await TaskFactory(file, fastify.config.dirPath))
-        }
-      }
-
-      return tasks
-    })
-
-    fastify.decorate('tasksToTree', function (tasks) {
-      return Object.groupBy(tasks, (task) => {
-        return task.relativePath.split('/')[0]
-      })
-    })
-
-    fastify.decorate('sortTasks', function (tasks) {
-     	return tasks.sort(
-        firstBy((a, b) => a.priority - b.priority)
-          .thenBy((a, b) => a.manualOrder - b.manualOrder)
-          .thenBy((a, b) => a.modified - b.modified)
+    function sortFilePathsByTask (taskList, filePaths) {
+      return filePaths.sort(
+        firstBy((a, b) => taskList.get(a).priority - taskList.get(b).priority)
+          .thenBy((a, b) => taskList.get(a).manualOrder - taskList.get(b).manualOrder)
+          .thenBy((a, b) => taskList.get(a).modified - taskList.get(b).modified)
       )
+    }
+
+    function groupFilePathsByLane (filePaths) {
+      return Object.groupBy(filePathsSorted, (entry) => {
+        const [_, lane, name] = entry.replace(dir, '').split('/')
+        return lane
+      })
+    }
+
+    const dir = fastify.config.dirPath
+    const lanes = fastify.config.lanes.map(([lane]) => lane)
+    const taskList = new Map()
+
+    let filePaths = []
+    let filePathsSorted = []
+    let filePathsGroupedByLane = {}
+
+    fastify.addHook('onReady', async () => {
+      for await (const entry of glob(join(dir, '/**/*'))) {
+        const [_, lane, name] = entry.replace(dir, '').split('/')
+
+        if (lanes.includes(lane) && name) {
+          const task = await TaskFactory(entry, dir)
+
+          taskList.set(entry, task)
+          filePaths.push(entry)
+        }
+      }
+
+      filePathsSorted = sortFilePathsByTask(taskList, filePaths)
+      filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
+    })
+
+    fastify.decorateRequest('taskList', () => taskList)
+    fastify.decorateRequest('filePathsGroupedByLane', () => filePathsGroupedByLane)
+
+    fastify.decorateRequest('updatePath', function (oldPath, newPath, newTask) {
+      taskList.delete(oldPath)
+      taskList.set(newPath, newTask)
+
+      filePaths = filePaths.filter((path) => path !== oldPath)
+      filePaths.push(newPath)
+
+      filePathsSorted = sortFilePathsByTask(taskList, filePaths)
+      filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
     })
   },
 
