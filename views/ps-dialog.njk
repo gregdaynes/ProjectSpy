@@ -1,124 +1,112 @@
-<style>
-/* ::backdrop doesn't exist unless dialog opened with .showModal() */
-body:has(> dialog[open]) {
-	overflow: hidden;
+<noscript>
+	<style>
+	/* ::backdrop doesn't exist unless dialog opened with .showModal() */
+	body:has(> dialog[open]) {
+		overflow: hidden;
 
-	&::before {
-		display: block;
-		content: '';
-		position: fixed;
-		inset: 0;
-		background-color: rgba(0, 0, 0, 0.5);
-		width: 100dvw;
-		height: 100dvh;
-		-webkit-backdrop-filter: blur(5px);
-		backdrop-filter: blur(5px);
-		z-index: calc(infinity);
+		&::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background-color: rgba(0, 0, 0, 0.15);
+			z-index: calc(infinity);
+
+			-webkit-backdrop-filter: blur(5px);
+			backdrop-filter: blur(5px);
+		}
 	}
+
+	dialog[open] {
+		position: absolute;
+		inset: 0;
+		z-index: calc(infinity + 1);
+	}
+	</style>
+</noscript>
+
+<style>
+dialog::backdrop {
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
 }
 
 dialog[open] {
-	position: absolute;
-	inset: 0;
-	z-index: calc(infinity + 1);
-
 	border-radius: var(--radius-100);
 	border: none;
-	box-shadow: 0 0 0 1px var(--color-gray-200), 0 0 15px 0 rgba(0, 0, 0, 0.3), 0 1px 5px 0 rgba(0, 0, 0, 0.1);
-	padding: 0;
-	display: grid;
-	grid-template-areas:
-		'header header'
-		'main aside'
-	;
-	grid-template-rows: auto 1fr;
-	grid-template-columns: minmax(80%, 80ch) 20%;
-	background-color: var(--color-gray-200);
+	box-shadow: 0 0 0 1px var(--color-gray-300);
 
-	header {
-		grid-area: header;
+	padding: 0;
+
+	display: flex;
+	flex-direction: column;
+
+	overflow: scroll;
+	max-height: 80dvh;
+
+	& header {
 		display: flex;
 		padding: var(--spacing-100);
 
-		div {
-			flex: 1;
-			margin: 0;
-			font-size: var(--font-size-150);
-			font-weight: var(--font-weight-bold);
-		}
+		justify-content: space-between;
 
-		form {
-			flex-shrink: 1;
-
-			button {
-				appearance: none;
-				border: none;
-				background-color: transparent;
-			}
-		}
+		font-weight: var(--font-weight-bold);
+		font-size: var(--font-size-90);
 	}
 
-	main {
-		grid-area: main;
+	& footer {
+		background-color: var(--color-gray-100);
+		padding: var(--spacing-100);
+	}
+
+	& > div {
 		padding: var(--spacing-100);
 		overflow-y: scroll;
-		border-top-right-radius: var(--radius-100);
-		border-top-left-radius: var(--radius-100);
-		background-color: var(--color-white);
+		max-width: 70ch;
 
-		h1, h2 {
-			margin-top: 0;
-		}
-	}
-
-	aside {
-		grid-area: aside;
-		padding: var(--spacing-100);
-
-		form {
-			display: flex;
-			flex-direction: column;
+		> *:first-child {
+			margin-block-start: 0;
 		}
 	}
 }
 </style>
 
 <dialog open>
-		<header>
-			<div>{{ task.filePath }}</div>
+	<header>
+		<div>{{ task.filePath }}</div>
 
-			<form method="get" action="/">
-				<button>×</button>
-			</form>
-		</header>
+		<form method="get" action="/">
+			<button>×</button>
+		</form>
+	</header>
 
-		<main>
-			{{ task.content | safe }}
-		</main>
+	<div>
+		{{ task.content | safe }}
+	</div>
 
-		<aside>
-			<form method="post" action="/update/{{ task.relativePath }}">
-				<select name="lane">
-					{% for lane in lanes %}
-						<option value="{{ lane[0] }}" {% if task.lane === lane[0] %}selected="selected"{% endif %}>{{ lane[1] }}</option>
-					{% endfor %}
-				</select>
+	<footer>
+		<form method="post" action="/update/{{ task.relativePath }}">
+			<label for="lane">Lane</label>
+			<select id="lane" name="lane">
+				{% for lane in lanes %}
+					<option value="{{ lane[0] }}" {% if task.lane === lane[0] %}selected="selected"{% endif %}>{{ lane[1] }}</option>
+				{% endfor %}
+			</select>
 
-				<button type="submit">Save</button>
-			</form>
-		</aside>
+			<button type="submit">Save</button>
+		</form>
+	</footer>
 </dialog>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-	const dialog = document.querySelector('dialog');
-	dialog.removeAttribute('open');
+	document.addEventListener('DOMContentLoaded', () => {
+		const dialog = document.querySelector('dialog');
+		dialog.removeAttribute('open');
 
-	dialog.showModal();
+		dialog.showModal();
 
-	dialog.addEventListener('click', ({ target }) => {
-		target === dialog && dialog.close();
-		window.history.replaceState({}, '', '/');
+		dialog.addEventListener('click', ({ target }) => {
+			target === dialog && dialog.close();
+			window.history.replaceState({}, '', '/');
+		});
 	});
-});
 </script>
