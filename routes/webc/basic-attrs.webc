@@ -1,0 +1,3 @@
+<div webc:root>
+	<span>testing attributes (this should be in red)</span>
+</div>

@@ -1,0 +1,5 @@
+<p webc:root>
+	The content should have "testing" inserted next: <span @text="myCustomProp"></span>
+
+	<div><span @text="myHiddenProp"></span></div>
+</p>

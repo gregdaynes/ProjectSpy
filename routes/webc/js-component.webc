@@ -1,0 +1,11 @@
+<script webc:type="render" webc:root>
+function () {
+	let output = ''
+
+	for (let i = 0; i < this.count; i++) {
+		output += i
+	}
+
+	return output
+}
+</script>
