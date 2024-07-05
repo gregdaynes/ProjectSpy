@@ -7,6 +7,7 @@
 	<body>
 		<h2>Directly access the top level $data</h2>
 		<p>how are you, <span @raw="$data.user"></span>?</p>
+		<p>how are you, <span @html="this.user"></span>?</p>
 
 		<h2>Pass @attributes to a component</h2>
 		<my-component @attributes="({ user: $data.user })"></my-component>

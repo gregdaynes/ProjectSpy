@@ -8,11 +8,18 @@ export default async function (fastify) {
     page.setInputPath(join(import.meta.dirname, 'webc', 'layout.webc'))
 
     const data = {
+      dataProperty: 'some data in data.dataProperty',
       user: 'testy mctesterson',
       num: 3,
     }
 
-    const { html } = await page.compile({ data })
+    // const { html } = await page.compile({ data })
+
+    const { html, css, js, components } = await page.compile({
+      data: {
+        dataProperty: 'dataValue',
+      },
+    })
 
     reply.headers({
       'Content-Type': 'text/html',
