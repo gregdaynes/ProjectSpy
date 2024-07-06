@@ -1,0 +1,50 @@
+<style>
+ps-lane {
+	border-radius: var(--radius-100);
+
+	flex: 1;
+	min-width: 300px;
+
+	display: flex;
+	flex-direction: column;
+
+	overflow-y: scroll;
+
+	background-image: linear-gradient(to bottom, var(--color-gray-300) 2rem, var(--color-gray-200) 5rem);
+	background-attachment: scroll;
+
+	box-shadow: 0 0 1px 1px var(--color-gray-300);
+
+	> div {
+		flex: 1;
+
+		padding: var(--spacing-100);
+
+		display: flex;
+		flex-direction: column;
+
+		gap: var(--spacing-100);
+	}
+}
+
+ps-lane-header {
+	padding: var(--spacing-100);
+
+	font-weight: var(--font-weight-bold);
+
+	position: sticky;
+	top: 0;
+
+	background-color: var(--color-gray-200);
+}
+</style>
+
+<ps-lane>
+	<ps-lane-header @text="lane.name">
+		{{ item.name }}
+	</ps-lane-header>
+
+	<div>
+		<ps-card webc:if="lane.tasks.length > 0" webc:for="task of lane.tasks || []" :@task="task"></ps-card>
+	</div>
+</ps-lane>

@@ -3,10 +3,6 @@ import { join } from 'node:path'
 
 export default async function (fastify) {
   fastify.get('/webc/', async (request, reply) => {
-    const page = new WebC()
-    page.defineComponents(join(import.meta.dirname, 'webc', '**.webc'))
-    page.setInputPath(join(import.meta.dirname, 'webc', 'layout.webc'))
-
     const filePathsGroupedByLane = request.filePathsGroupedByLane()
     const taskLanes = request.server.config.lanes.map(([lane, name]) => {
       return {
@@ -23,6 +19,11 @@ export default async function (fastify) {
       }
     })
 
+    const page = new WebC()
+    page.setBundlerMode(true)
+    page.defineComponents(join(import.meta.dirname, 'webc', '**.webc'))
+    page.setInputPath(join(import.meta.dirname, 'webc', 'ps-base.webc'))
+
     // this is our locals data
     const data = {
       ...reply.locals,
@@ -30,11 +31,20 @@ export default async function (fastify) {
       tasks: request.taskList(),
     }
 
-    const { html } = await page.compile({ data })
+    let { html, js, css } = await page.compile({ data })
+
+    console.log({ css })
+
+    css = '<style>' + css.join('\n') + '</style>'
+    js = '<script>' + js.join('\n') + '</script>'
+
+    html = html.replace(/<\/body>/, js + '</body>')
+    html = html.replace(/<\/head>/, css + '</head>')
 
     reply.headers({
       'Content-Type': 'text/html',
     })
+
     return reply.send(html)
   })
 }
