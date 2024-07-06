@@ -1,0 +1,115 @@
+<script webc:setup>
+	const buildAction = ({ relativePath }) => `/update/${relativePath}`;
+	const checkSelected = ({ lane }, currentLane) => lane === currentLane ? 'selected' : 'false';
+</script>
+
+<noscript>
+	<style>
+	/* ::backdrop doesn't exist unless dialog opened with .showModal() */
+	body:has(> dialog[open]) {
+		overflow: hidden;
+
+		&::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background-color: rgba(0, 0, 0, 0.15);
+			z-index: calc(infinity);
+
+			-webkit-backdrop-filter: blur(5px);
+			backdrop-filter: blur(5px);
+		}
+	}
+
+	dialog[open] {
+		position: absolute;
+		inset: 0;
+		z-index: calc(infinity + 1);
+	}
+	</style>
+</noscript>
+
+<style>
+dialog::backdrop {
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+}
+
+dialog[open] {
+	border-radius: var(--radius-100);
+	border: none;
+	box-shadow: 0 0 0 1px var(--color-gray-300);
+
+	padding: 0;
+
+	display: flex;
+	flex-direction: column;
+
+	overflow: scroll;
+	max-height: 80dvh;
+
+	& header {
+		display: flex;
+		padding: var(--spacing-100);
+
+		justify-content: space-between;
+
+		font-weight: var(--font-weight-bold);
+		font-size: var(--font-size-90);
+	}
+
+	& footer {
+		background-color: var(--color-gray-100);
+		padding: var(--spacing-100);
+	}
+
+	& > div {
+		padding: var(--spacing-100);
+		overflow-y: scroll;
+		max-width: 70ch;
+
+		> *:first-child {
+			margin-block-start: 0;
+		}
+	}
+}
+</style>
+
+<dialog open>
+	<header>
+		<div @text="task.filePath"></div>
+
+		<form method="get" action="/webc/">
+			<button type="submit">
+				<span>Close</span>
+			</button>
+		</form>
+	</header>
+
+	<div @html="task.content"></div>
+
+	<footer>
+		<form method="post" :action="buildAction(task)">
+			<label for="lane">Lane</label>
+			<select id="lane" name="lane">
+				<option webc:for="lane of lanes" :selected="checkSelected(lane[0], task)" :value="lane[0]" @text="lane[1]">{{ lane[1] }}</option>
+			</select>
+
+			<button type="submit">Save</button>
+		</form>
+	</footer>
+</dialog>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const dialog = document.querySelector('dialog');
+		dialog.removeAttribute('open');
+
+		dialog.showModal();
+
+		dialog.addEventListener('click', ({ target }) => {
+			target === dialog && dialog.close();
+			window.history.replaceState({}, '', '/');
+		});
+	});
+</script>

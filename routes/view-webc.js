@@ -1,8 +1,17 @@
-import { WebC } from '@11ty/webc'
 import { join } from 'node:path'
+import { WebC } from '@11ty/webc'
 
 export default async function (fastify) {
-  fastify.get('/webc/', async (request, reply) => {
+  fastify.get('/webc/view/:lane/:filename', async (request, reply) => {
+    const { lane, filename } = request.params
+    const filePath = join(request.server.config.dirPath, lane, filename)
+
+    const task = request.taskList().get(filePath)
+
+    if (task === undefined) {
+      return reply.redirect('/')
+    }
+
     const filePathsGroupedByLane = request.filePathsGroupedByLane()
     const taskLanes = request.server.config.lanes.map(([lane, name]) => {
       return {
@@ -23,12 +32,20 @@ export default async function (fastify) {
       ...reply.locals,
       taskLanes,
       tasks: request.taskList(),
+      lanes: request.server.config.lanes,
+
+      task: {
+        ...task,
+        content: task.render(),
+        lane,
+        filePath: task.relativePath,
+      },
     }
 
     const page = new WebC()
     page.setBundlerMode(true)
     page.defineComponents(join(import.meta.dirname, 'webc', '**.webc'))
-    page.setInputPath(join(import.meta.dirname, 'webc', 'ps-home.webc'))
+    page.setInputPath(join(import.meta.dirname, 'webc', 'ps-view.webc'))
 
     let { html, js, css } = await page.compile({ data })
 

@@ -1,10 +1,5 @@
 <script webc:setup>
-	const buildHref = ({ relativePath }) => `/view/${relativePath}`;
-	const buildDescription = (task) => {
-		console.log(task)
-
-		return task.descriptionHTML
-	}
+	const buildHref = ({ relativePath }) => `/webc/view/${relativePath}`;
 </script>
 
 <style>
