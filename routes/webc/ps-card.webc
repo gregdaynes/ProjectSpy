@@ -1,5 +1,5 @@
 <script webc:setup>
-	const buildHref = ({ relativePath }) => `/webc/view/${relativePath}`;
+	const buildHref = ({ relativePath }) => `/view/${relativePath}`;
 </script>
 
 <style>

@@ -79,7 +79,7 @@ dialog[open] {
 	<header>
 		<div @text="task.filePath"></div>
 
-		<form method="get" action="/webc/">
+		<form method="get" action="/">
 			<button type="submit">
 				<span>Close</span>
 			</button>

@@ -1,7 +1,0 @@
-<div>
-	<div>
-		<template webc:root="override" class="another-class">
-			Some component content
-		</template>
-	</div>
-</div>

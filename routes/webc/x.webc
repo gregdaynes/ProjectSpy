@@ -1,9 +1,0 @@
-		<template @html="'Template HTML'"></template>
-		<template @html="$data.dataProperty"></template>
-
-		<!-- webc:nokeep will replace the outer html -->
-		<template @html="'Template HTML'" webc:nokeep></template>
-
-		<p @text="$data.title"><p>
-
-<some-component :title="$data.title"></some-component>

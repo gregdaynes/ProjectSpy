@@ -1,1 +1,0 @@
-<some-component webc:root @text="title"></some-component>

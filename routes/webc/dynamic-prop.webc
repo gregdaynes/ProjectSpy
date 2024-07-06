@@ -1,3 +1,0 @@
-<span :src="src" :alt="alt" class="avatar-image"></span>
-
-hello? <span @text="dynamicProp" :some-data="dynamicProp"></span>
