@@ -1,3 +1,8 @@
+<script webc:setup>
+	const buildAction = ({ relativePath }) => `/update/${relativePath}`;
+	const checkSelected = ({ lane }, currentLane) => lane === currentLane ? 'selected' : 'false';
+</script>
+
 <noscript>
 	<style>
 	/* ::backdrop doesn't exist unless dialog opened with .showModal() */
@@ -72,24 +77,22 @@ dialog[open] {
 
 <dialog open>
 	<header>
-		<div>{{ task.filePath }}</div>
+		<div @text="task.filePath"></div>
 
 		<form method="get" action="/">
-			<button>×</button>
+			<button type="submit">
+				<span>Close</span>
+			</button>
 		</form>
 	</header>
 
-	<div>
-		{{ task.content | safe }}
-	</div>
+	<div @html="task.content"></div>
 
 	<footer>
-		<form method="post" action="/update/{{ task.relativePath }}">
+		<form method="post" :action="buildAction(task)">
 			<label for="lane">Lane</label>
 			<select id="lane" name="lane">
-				{% for lane in lanes %}
-					<option value="{{ lane[0] }}" {% if task.lane === lane[0] %}selected="selected"{% endif %}>{{ lane[1] }}</option>
-				{% endfor %}
+				<option webc:for="lane of lanes" :selected="checkSelected(lane[0], task)" :value="lane[0]" @text="lane[1]">{{ lane[1] }}</option>
 			</select>
 
 			<button type="submit">Save</button>

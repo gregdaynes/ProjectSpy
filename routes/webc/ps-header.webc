@@ -10,6 +10,8 @@ ps-logo {
 }
 </style>
 
-<ps-logo>
-	<h1>ProjectSpy</h1>
-</ps-logo>
+<ps-header>
+	<ps-logo>
+		<h1>ProjectSpy</h1>
+	</ps-logo>
+</ps-header>

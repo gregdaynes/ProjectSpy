@@ -12,9 +12,5 @@ ps-main {
 </style>
 
 <ps-main>
-	{% from 'ps-lane.njk' import lane %}
-
-	{% for item in taskLanes %}
-		{{ lane(item) }}
-	{% endfor %}
+	<ps-lane webc:for="lane of lanes" :@lane="lane"></ps-lane>
 </ps-main>

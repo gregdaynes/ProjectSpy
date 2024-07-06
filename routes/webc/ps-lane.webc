@@ -1,6 +1,3 @@
-{% from 'ps-card.njk' import card %}
-
-{% macro lane(item) %}
 <style>
 ps-lane {
 	border-radius: var(--radius-100);
@@ -43,16 +40,11 @@ ps-lane-header {
 </style>
 
 <ps-lane>
-	<ps-lane-header>
+	<ps-lane-header @text="lane.name">
 		{{ item.name }}
 	</ps-lane-header>
 
 	<div>
-	{% if item.tasks.length %}
-		{% for task in item.tasks %}
-			{{ card(task) }}
-		{% endfor %}
-	{% endif %}
+		<ps-card webc:if="lane.tasks.length > 0" webc:for="task of lane.tasks || []" :@task="task"></ps-card>
 	</div>
 </ps-lane>
-{% endmacro %}
