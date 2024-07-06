@@ -1,4 +1,7 @@
-{% macro card(item) %}
+<script webc:setup>
+	const buildHref = ({ relativePath }) => `/view/${relativePath}`;
+</script>
+
 <style>
 ps-card {
 	background-color: var(--color-white);
@@ -33,13 +36,8 @@ ps-card {
 }
 </style>
 
-<ps-card>
-	<a href="/view/{{ item.relativePath }}">
-		<span>{{ item.title }}</span>
+<a :href="buildHref(task)">
+	<span @text="task.title"></span>
 
-		<div>
-			{{ item.descriptionHTML | safe }}
-		</div>
-	</a>
-</ps-card>
-{% endmacro %}
+	<div @html="task.descriptionHTML"></div>
+</a>

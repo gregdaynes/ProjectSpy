@@ -119,9 +119,7 @@ async function getHeader (filePath) {
   rl.on('line', (line) => {
     // done
     if (description) {
-      rl.close()
-      resolve([title, description])
-      return
+      return rl.close()
     }
 
     // empty line
