@@ -1,5 +1,4 @@
 import { join } from 'node:path'
-import { WebC } from '@11ty/webc'
 
 export default async function (fastify) {
   fastify.get('/view/:lane/:filename', async (request, reply) => {
@@ -42,23 +41,6 @@ export default async function (fastify) {
       },
     }
 
-    const page = new WebC()
-    page.setBundlerMode(true)
-    page.defineComponents(join(import.meta.dirname, 'webc', '**.webc'))
-    page.setInputPath(join(import.meta.dirname, 'webc', 'ps-view.webc'))
-
-    let { html, js, css } = await page.compile({ data })
-
-    css = '<style>' + css.join('\n') + '</style>'
-    js = '<script>' + js.join('\n') + '</script>'
-
-    html = html.replace(/<\/body>/, js + '</body>')
-    html = html.replace(/<\/head>/, css + '</head>')
-
-    reply.headers({
-      'Content-Type': 'text/html',
-    })
-
-    return reply.send(html)
+    return reply.render('ps-view.webc', data)
   })
 }

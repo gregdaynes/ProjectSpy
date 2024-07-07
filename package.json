@@ -8,7 +8,7 @@
 		"projectspy": "./bin/server.js"
 	},
 	"scripts": {
-		"start": "fastify start -l debug -p 3000 -a 0.0.0.0 -P -o -w --ignore-watch='node_modules .git .projectspy' index.js",
+		"start": "fastify start -l debug -p 3000 -a 0.0.0.0 -P -o -w --ignore-watch='node_modules .git .projectspy routes/webc' index.js",
 		"test": "eslint . && node --test",
 		"update": "npx npm-check-updates -i --format group"
 	},
@@ -30,6 +30,7 @@
 		"@11ty/webc": "^0.11.4",
 		"@fastify/autoload": "^5.10.0",
 		"@fastify/formbody": "^7.4.0",
+		"@fastify/websocket": "^10.0.1",
 		"fastify": "^4.28.1",
 		"fastify-plugin": "^4.5.1",
 		"fluent-json-schema": "^4.2.1",
