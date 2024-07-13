@@ -5,6 +5,8 @@ import { join } from 'node:path'
 import { marked } from 'marked'
 
 export class Task {
+  #contents = null
+
   constructor (filePath, metadata = {}) {
     this.filePath = filePath
     ;[this.title, this.markdownTitle] = this.#parseTitle(metadata.title)
@@ -25,9 +27,12 @@ export class Task {
   }
 
   render () {
-    const fileContents = readFileSync(this.filePath, 'utf8')
+    if (!this.#contents) {
+      this.#contents = readFileSync(this.filePath, 'utf8')
+    }
 
-    const modifiedFileContents = fileContents.split('\n')
+    const modifiedFileContents = this.#contents.split('\n')
+
     modifiedFileContents[0] = this.markdownTitle
     if (modifiedFileContents[1].includes('--') || modifiedFileContents[1].includes('==')) {
       modifiedFileContents[1] = undefined
@@ -36,6 +41,14 @@ export class Task {
     const content = marked.parse(modifiedFileContents.join('\n'))
 
     return content.trim()
+  }
+
+  rawContents () {
+    if (!this.#contents) {
+      this.#contents = readFileSync(this.filePath, 'utf8')
+    }
+
+    return this.#contents
   }
 
   #parseTitle (title) {
