@@ -1,6 +1,9 @@
 <script webc:setup>
 	const buildAction = ({ relativePath }) => `/update/${relativePath}`;
-	const checkSelected = ({ lane }, currentLane) => lane === currentLane ? 'selected' : 'false';
+	const checkSelected = (lane, task) => {
+		console.log(lane, task.lane)
+		lane === task.lane ? 'selected' : 'false';
+	}
 </script>
 
 <noscript>
@@ -48,6 +51,10 @@ dialog[open] {
 
 	overflow: scroll;
 	max-height: 80dvh;
+	max-width: calc(70ch + 2 * var(--spacing-100));
+	min-width: min(90vw, 70ch);
+	min-height: min(90vh, 70ch);
+
 
 	& header {
 		display: flex;
@@ -64,14 +71,79 @@ dialog[open] {
 		padding: var(--spacing-100);
 	}
 
-	& > div {
-		padding: var(--spacing-100);
-		overflow-y: scroll;
-		max-width: 70ch;
-
+	& > div, textarea {
 		> *:first-child {
 			margin-block-start: 0;
 		}
+	}
+}
+
+.tabs {
+	display: flex;
+	top: 0;
+	border-bottom: 1px solid light-dark(var(--color-gray-300), var(--color-gray-700));
+}
+
+dialog[open] .tabs {
+	padding-bottom: 0;
+}
+
+input[name="mode-toggle"] {
+	display: none;
+}
+
+label {
+	cursor: pointer;
+	padding: var(--spacing-50) var(--spacing-100);
+	border: 1px solid light-dark(var(--color-gray-300), var(--color-gray-700));
+	border-bottom: none;
+}
+
+.pane {
+	flex: 1;
+	position: relative;
+	overflow-y: scroll;
+	display: flex;
+
+	div {
+		position: relative;
+		background-color: rgb(28, 27, 34);
+		z-index: 0;
+		padding: var(--spacing-100);
+
+		h1 {
+			margin-top: 0;
+		}
+	}
+
+	textarea {
+		border: none;
+		position: absolute;
+		inset: 0;
+		background-color: rgb(28, 27, 34);
+		z-index: 0;
+		font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+	padding: var(--spacing-100);
+	}
+}
+
+input[name="mode-toggle"][value="view"]:checked ~ div {
+	z-index: 1;
+}
+
+input[name="mode-toggle"][value="edit"]:checked ~ textarea {
+	z-index: 1;
+}
+
+dialog:has(input[name="mode-toggle"][value="view"]:checked) {
+	label[for="modeToggleView"] {
+		background-color: light-dark(var(--color-gray-300), var(--color-gray-700));
+	}
+}
+
+dialog:has(input[name="mode-toggle"][value="edit"]:checked) {
+	label[for="modeToggleEdit"] {
+		background-color: light-dark(var(--color-gray-300), var(--color-gray-700));
 	}
 }
 </style>
@@ -87,10 +159,21 @@ dialog[open] {
 		</form>
 	</header>
 
-	<div @html="task.content"></div>
+	<div class="tabs">
+		<label for="modeToggleView">View</label>
+		<label for="modeToggleEdit">Edit</label>
+	</div>
+
+	<div class="pane">
+		<input type="radio" id="modeToggleView" name="mode-toggle" value="view" form="updateForm" checked="checked">
+		<input type="radio" id="modeToggleEdit" name="mode-toggle" value="edit" form="updateForm">
+
+		<div @html="task.content"></div>
+		<textarea name="content" id="content" form="updateForm" @html="task.rawContents"></textarea>
+	</div>
 
 	<footer>
-		<form method="post" :action="buildAction(task)">
+		<form id="updateForm" method="post" :action="buildAction(task)">
 			<label for="lane">Lane</label>
 			<select id="lane" name="lane">
 				<option webc:for="lane of lanes" :selected="checkSelected(lane[0], task)" :value="lane[0]" @text="lane[1]">{{ lane[1] }}</option>

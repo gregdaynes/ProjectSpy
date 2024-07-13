@@ -36,6 +36,7 @@ export default async function (fastify) {
       task: {
         ...task,
         content: task.render(),
+        rawContents: task.rawContents(),
         lane,
         filePath: task.relativePath,
       },
