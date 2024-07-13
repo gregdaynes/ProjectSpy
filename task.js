@@ -9,7 +9,7 @@ export class Task {
 
   constructor (filePath, metadata = {}) {
     this.filePath = filePath
-    ;[this.title, this.markdownTitle] = this.#parseTitle(metadata.title)
+    ;[this.title, this.markdownTitle] = this.#parseTitle(metadata.title, metadata.filename)
     this.description = metadata.description
     this.created = metadata.created
     this.modified = metadata.modified
@@ -51,10 +51,12 @@ export class Task {
     return this.#contents
   }
 
-  #parseTitle (title) {
+  #parseTitle (title, filename) {
     ;[title, this.manualOrder] = this.#getManualOrder(title)
     ;[title, this.priority] = this.#getPriority(title)
     ;[title, this.tags] = this.#getTags(title)
+
+    if (!title) return [filename, '']
 
     return [title.split('\n')[0].replace('#', '').trim(), title.trim()]
   }
@@ -107,7 +109,7 @@ export default async function TaskFactory (filePath, dirPath) {
   const [title, description] = await getHeader(filePath)
   const { birthtime: created, mtime: modified } = await stat(filePath)
   const relativePath = filePath.replace(join(dirPath, '/'), '')
-  const [_, lane, filename] = filePath.replace(dirPath, '').split('/')
+  const [, lane, filename] = filePath.split(dirPath)[1].split('/')
 
   return new Task(join(process.cwd(), filePath), {
     filename,
