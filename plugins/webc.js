@@ -99,7 +99,7 @@ class HTMLGenerator {
 
   getPagesWithComponent (filename) {
     const pageNamesToCompile = this.pageComponents[filename]
-    return this.getPages().filter(([pageName]) => pageNamesToCompile.has(pageName))
+    return this.getPages().filter(([pageName]) => pageNamesToCompile?.has(pageName))
   }
 
   updateComponents (components, filename) {

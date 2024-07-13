@@ -1,16 +1,18 @@
+<ps-main webc:root="override">
+	<ps-lane webc:nokeep webc:for="lane of lanes" :@lane="lane"></ps-lane>
+</ps-main>
+
 <style>
 ps-main {
-	flex: 1;
-
+  flex: 1 1;
 	display: flex;
 	flex-direction: row;
-
-	overflow-x: scroll;
-
 	gap: var(--spacing-100);
+  height: 100%;
+  overflow: scroll;
+
+	> * {
+		flex: 1 1;
+	}
 }
 </style>
-
-<ps-main>
-	<ps-lane webc:for="lane of lanes" :@lane="lane"></ps-lane>
-</ps-main>

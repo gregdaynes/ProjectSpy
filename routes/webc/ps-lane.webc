@@ -1,50 +1,29 @@
+<ps-lane class="outline stack">
+	<ps-lane-header class="box">
+		<h2 @text="lane.name">{{ item.name }}</h2>
+	</ps-lane-header>
+
+	<div class="stack box">
+		<ps-card webc:nokeep class="outline box stack" webc:if="lane.tasks.length > 0" webc:for="task of lane.tasks || []" :@task="task"></ps-card>
+	</div>
+</ps-lane>
+
 <style>
 ps-lane {
-	border-radius: var(--radius-100);
+  border-radius: var(--radius-100);
 
-	flex: 1;
-	min-width: 300px;
+  min-width: 300px;
 
-	display: flex;
-	flex-direction: column;
+  overflow-y: scroll;
+  background-image: linear-gradient(to bottom, light-dark(var(--color-gray-300), var(--color-gray-1000)) 2rem, light-dark(var(--color-gray-200), var(--color-gray-900)) 5rem);
+  background-attachment: scroll;
 
-	overflow-y: scroll;
+  ps-lane-header {
+    position: sticky;
+    top: 0;
 
-	background-image: linear-gradient(to bottom, light-dark(var(--color-gray-300), var(--color-gray-1000)) 2rem, light-dark(var(--color-gray-200), var(--color-gray-900)) 5rem);
-	background-attachment: scroll;
-
-	box-shadow: inset 0 0 1px 1px light-dark(var(--color-gray-300), var(--color-gray-700));
-
-	> div {
-		flex: 1;
-
-		padding: var(--spacing-100);
-
-		display: flex;
-		flex-direction: column;
-
-		gap: var(--spacing-100);
-	}
-}
-
-ps-lane-header {
-	padding: var(--spacing-100);
-
-	font-weight: var(--font-weight-bold);
-
-	position: sticky;
-	top: 0;
-
-	background-color: light-dark(var(--color-gray-200), var(--color-gray-800));
+    background-color: light-dark(var(--color-gray-200), var(--color-gray-800));
+  }
 }
 </style>
 
-<ps-lane>
-	<ps-lane-header @text="lane.name">
-		{{ item.name }}
-	</ps-lane-header>
-
-	<div>
-		<ps-card webc:if="lane.tasks.length > 0" webc:for="task of lane.tasks || []" :@task="task"></ps-card>
-	</div>
-</ps-lane>

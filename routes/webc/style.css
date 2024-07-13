@@ -61,6 +61,11 @@ html {
 	color: light-dark(black, white);
 }
 
+/* This makes the elements full screen while keeping the scrolling smooth. */
+body, html{
+  scroll-behavior: smooth; 
+}
+
 /* Remove default margin in favour of better control in authored CSS */
 body, h1, h2, h3, h4, p,
 figure, blockquote, dl, dd {
@@ -76,7 +81,7 @@ ol[role='list'] {
 /* Set core body defaults */
 body {
 	margin: 0;
-  min-height: 100vh;
+  height: 100dvh;
   line-height: 1.5;
 	font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 	background-color: light-dark(var(--color-gray-100), var(--color-gray-1000));
@@ -92,6 +97,8 @@ button, input, label {
 h1, h2,
 h3, h4 {
   text-wrap: balance;
+	margin-block: 0;
+	font-size: var(--font-size-150);
 }
 
 /* A elements that don't have a class get default styles */
@@ -102,9 +109,14 @@ a:not([class]) {
 
 /* Make images easier to work with */
 img,
-picture {
+picture, 
+svg {
   max-width: 100%;
   display: block;
+}
+
+img, picture, svg, video, canvas{
+  vertical-align: middle; 
 }
 
 /* Inherit fonts for inputs and buttons */
@@ -124,10 +136,33 @@ textarea:not([rows]) {
   scroll-margin-block: 5ex;
 }
 
+/* Italicize image alt text */
+img, picture, svg, video, canvas{
+  font-style: italic; 
+}
+
+/* turn off animations for people who don't want to see them. */
+@media (prefers-reduced-motion: reduce){
+    html:focus-within {
+        scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+        transition: none;
+    }
+}
+
 
 /**
  * Elements
  */
+
+a {
+	color: light-dark(var(--color-gray-600), var(--color-gray-300));
+}
 
 
 
@@ -138,12 +173,9 @@ textarea:not([rows]) {
 body {
 	display: flex;
 	flex-direction: column;
-
-	height: 100dvh;
-
 	gap: var(--spacing-100);
-
 	padding: var(--spacing-150);
+  overflow: hidden;
 }
 
 
@@ -157,3 +189,25 @@ body {
  * Utilities
  */
 
+.outline {
+	--outline-color: light-dark(var(--outline-light, var(--color-gray-200)), var(--outline-dark, var(--color-gray-900)));
+	box-shadow: 0 0 0 1px var(--outline-color);
+}
+
+.box {
+	padding: var(--spacing-100);
+}
+
+.stack {
+	--gap: var(--spacing-100);
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+}
+
+.repel {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}

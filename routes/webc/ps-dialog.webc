@@ -1,9 +1,58 @@
 <script webc:setup>
 	const buildAction = ({ relativePath }) => `/update/${relativePath}`;
 	const checkSelected = (lane, task) => {
-		console.log(lane, task.lane)
 		lane === task.lane ? 'selected' : 'false';
 	}
+</script>
+
+<dialog open class="stack outline">
+	<header class="repel box">
+		<h3 @text="task.filePath"></h3>
+
+		<form method="get" action="/">
+			<button type="submit">
+				<span>Close</span>
+			</button>
+		</form>
+	</header>
+
+	<div class="tabs">
+		<label for="modeToggleView">View</label>
+		<label for="modeToggleEdit">Edit</label>
+	</div>
+
+	<div class="pane">
+		<input type="radio" id="modeToggleView" name="mode-toggle" value="view" form="updateForm" checked="checked">
+		<input type="radio" id="modeToggleEdit" name="mode-toggle" value="edit" form="updateForm">
+
+		<div class="view box" @html="task.content"></div>
+		<textarea class="box" name="content" id="content" form="updateForm" @html="task.rawContents"></textarea>
+	</div>
+
+	<footer class="box">
+		<form id="updateForm" method="post" :action="buildAction(task)">
+			<label for="lane">Lane</label>
+			<select id="lane" name="lane">
+				<option webc:for="lane of lanes" :selected="checkSelected(lane[0], task)" :value="lane[0]" @text="lane[1]">{{ lane[1] }}</option>
+			</select>
+
+			<button type="submit">Save</button>
+		</form>
+	</footer>
+</dialog>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const dialog = document.querySelector('dialog');
+		dialog.removeAttribute('open');
+
+		dialog.showModal();
+
+		dialog.addEventListener('click', ({ target }) => {
+			target === dialog && dialog.close();
+			window.history.replaceState({}, '', '/');
+		});
+	});
 </script>
 
 <noscript>
@@ -29,6 +78,7 @@
 		inset: 0;
 		z-index: calc(infinity + 1);
 	}
+
 	</style>
 </noscript>
 
@@ -40,35 +90,18 @@ dialog::backdrop {
 }
 
 dialog[open] {
+	--gap: 0;
+
 	border-radius: var(--radius-100);
 	border: none;
-	box-shadow: 0 0 0 1px light-dark(var(--color-gray-300), var(--color-gray-700));
-
 	padding: 0;
-
-	display: flex;
-	flex-direction: column;
-
 	overflow: scroll;
 	max-height: 80dvh;
 	max-width: calc(70ch + 2 * var(--spacing-100));
 	min-width: min(90vw, 70ch);
-	min-height: min(90vh, 70ch);
-
-
-	& header {
-		display: flex;
-		padding: var(--spacing-100);
-
-		justify-content: space-between;
-
-		font-weight: var(--font-weight-bold);
-		font-size: var(--font-size-90);
-	}
 
 	& footer {
 		background-color: light-dark(var(--color-gray-100), var(--color-gray-800));
-		padding: var(--spacing-100);
 	}
 
 	& > div, textarea {
@@ -78,122 +111,60 @@ dialog[open] {
 	}
 }
 
-.tabs {
-	display: flex;
-	top: 0;
-	border-bottom: 1px solid light-dark(var(--color-gray-300), var(--color-gray-700));
-}
-
-dialog[open] .tabs {
-	padding-bottom: 0;
-}
-
-input[name="mode-toggle"] {
+dialog:not([open]) {
 	display: none;
 }
 
-label {
-	cursor: pointer;
-	padding: var(--spacing-50) var(--spacing-100);
-	border: 1px solid light-dark(var(--color-gray-300), var(--color-gray-700));
-	border-bottom: none;
+.tabs {
+	display: flex;
+	border-bottom: 1px solid light-dark(var(--color-gray-300), var(--color-gray-700));
+
+	label {
+		cursor: pointer;
+		padding: var(--spacing-50) var(--spacing-100);
+		border: 1px solid light-dark(var(--color-gray-300), var(--color-gray-700));
+		border-bottom: none;
+	}
 }
 
 .pane {
-	flex: 1;
 	position: relative;
 	overflow-y: scroll;
-	display: flex;
 
-	div {
+	.view {
 		position: relative;
-		background-color: rgb(28, 27, 34);
-		z-index: 0;
-		padding: var(--spacing-100);
-
-		h1 {
-			margin-top: 0;
-		}
+		background-color: light-dark(var(--color-white), var(--color-gray-800));
 	}
 
 	textarea {
 		border: none;
 		position: absolute;
 		inset: 0;
-		background-color: rgb(28, 27, 34);
-		z-index: 0;
 		font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-	padding: var(--spacing-100);
 	}
 }
 
-input[name="mode-toggle"][value="view"]:checked ~ div {
-	z-index: 1;
+input[name="mode-toggle"] {
+	display: none;
+
+	&[value="view"]:checked ~ div {
+		z-index: 1;
+	}
+
+	&[value="edit"]:checked ~ textarea {
+		z-index: 1;
+	}
 }
 
-input[name="mode-toggle"][value="edit"]:checked ~ textarea {
-	z-index: 1;
-}
-
-dialog:has(input[name="mode-toggle"][value="view"]:checked) {
+dialog:has(input[value="view"]:checked) {
 	label[for="modeToggleView"] {
 		background-color: light-dark(var(--color-gray-300), var(--color-gray-700));
 	}
 }
 
-dialog:has(input[name="mode-toggle"][value="edit"]:checked) {
+dialog:has(input[value="edit"]:checked) {
 	label[for="modeToggleEdit"] {
 		background-color: light-dark(var(--color-gray-300), var(--color-gray-700));
 	}
 }
 </style>
-
-<dialog open>
-	<header>
-		<div @text="task.filePath"></div>
-
-		<form method="get" action="/">
-			<button type="submit">
-				<span>Close</span>
-			</button>
-		</form>
-	</header>
-
-	<div class="tabs">
-		<label for="modeToggleView">View</label>
-		<label for="modeToggleEdit">Edit</label>
-	</div>
-
-	<div class="pane">
-		<input type="radio" id="modeToggleView" name="mode-toggle" value="view" form="updateForm" checked="checked">
-		<input type="radio" id="modeToggleEdit" name="mode-toggle" value="edit" form="updateForm">
-
-		<div @html="task.content"></div>
-		<textarea name="content" id="content" form="updateForm" @html="task.rawContents"></textarea>
-	</div>
-
-	<footer>
-		<form id="updateForm" method="post" :action="buildAction(task)">
-			<label for="lane">Lane</label>
-			<select id="lane" name="lane">
-				<option webc:for="lane of lanes" :selected="checkSelected(lane[0], task)" :value="lane[0]" @text="lane[1]">{{ lane[1] }}</option>
-			</select>
-
-			<button type="submit">Save</button>
-		</form>
-	</footer>
-</dialog>
-
-<script>
-	document.addEventListener('DOMContentLoaded', () => {
-		const dialog = document.querySelector('dialog');
-		dialog.removeAttribute('open');
-
-		dialog.showModal();
-
-		dialog.addEventListener('click', ({ target }) => {
-			target === dialog && dialog.close();
-			window.history.replaceState({}, '', '/');
-		});
-	});
-</script>

@@ -1,17 +1,13 @@
-<style>
-ps-logo {
-	display: block;
-
-	h1 {
-		margin: 0;
-		font-weight: var(--font-weight-heavy);
-		font-size: var(--font-size-200);
-	}
-}
-</style>
-
 <ps-header>
 	<ps-logo>
 		<h1>ProjectSpy</h1>
 	</ps-logo>
 </ps-header>
+
+<style>
+ps-logo {
+	h1 {
+		font-size: var(--font-size-200);
+	}
+}
+</style>
