@@ -6,6 +6,6 @@
 	<body>
 		<ps-header></ps-header>
 
-		<ps-main :lanes="$data.taskLanes"></ps-main>
+		<ps-main :@lanes="$data.taskLanes"></ps-main>
 	</body>
 </html>
