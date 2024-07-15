@@ -29,7 +29,7 @@
 		<textarea class="box" name="content" id="content" form="updateForm" @html="task.rawContents"></textarea>
 	</div>
 
-	<footer class="box">
+	<footer class="box cluster">
 		<form id="updateForm" method="post" :action="buildAction(task)">
 			<label for="lane">Lane</label>
 			<select id="lane" name="lane">
@@ -38,6 +38,10 @@
 
 			<button type="submit">Save</button>
 		</form>
+
+    <div class="cluster">
+      <ps-tag webc:for="tag of task.tags" :tag="tag"></ps-tag>
+    </div>
 	</footer>
 </dialog>
 
@@ -166,5 +170,13 @@ dialog:has(input[value="edit"]:checked) {
 	label[for="modeToggleEdit"] {
 		background-color: light-dark(var(--color-gray-300), var(--color-gray-700));
 	}
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space, var(--spacing-50));
+  justify-content: flex-start;
+  align-items: center;
 }
 </style>
