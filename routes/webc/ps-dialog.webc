@@ -170,6 +170,10 @@ dialog:has(input[value="edit"]:checked) {
 	label[for="modeToggleEdit"] {
 		background-color: light-dark(var(--color-gray-300), var(--color-gray-700));
 	}
+
+  .pane {
+    min-height: 15em;
+  }
 }
 
 .cluster {
