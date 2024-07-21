@@ -10,27 +10,39 @@ export default async function (fastify) {
     // const task = request.taskList().get(filePath)
     const fileContents = await readFile(filePath, { encoding: 'utf-8' })
 
+    // Things that change
     // TODO this is gonna be rough. We should clean and hash both to determine if they are the same
-    const newFileContents = request.body.content
-    if (fileContents !== newFileContents) {
-		  // TODO we should combine the writes, so their is only a single disk write at the end
-      await writeFile(filePath, newFileContents)
-      // TODO we also need to force update the task in our taskList
-      const newTask = await TaskFactory(filePath, request.server.config.dirPath)
-      request.updatePath(filePath, filePath, newTask)
+    const updatedContents = request.body.content
+    let updatedFilePath = filePath
+    let hasUpdatedContent = false
+    let hasUpdatedPath = false
+    let newTask
+
+    if (fileContents !== updatedContents) {
+      hasUpdatedContent = true
     }
 
     // move the file if the lane has changed
     if (lane !== request.body.lane) {
+      hasUpdatedPath = true
       lane = request.body.lane
+      updatedFilePath = join(request.server.config.dirPath, lane, filename)
+    }
 
-      const newFilePath = join(request.server.config.dirPath, lane, filename)
+    // Write file changes including new file if moved
+    if (hasUpdatedContent || hasUpdatedPath) {
+      await writeFile(updatedFilePath, updatedContents)
+    }
 
-      await writeFile(newFilePath, fileContents)
+    // delete the old file
+    if (hasUpdatedPath) {
       await unlink(filePath)
+    }
 
-      const newTask = await TaskFactory(newFilePath, request.server.config.dirPath)
-      request.updatePath(filePath, newFilePath, newTask)
+    // update the task in the taskList
+    if (hasUpdatedContent || hasUpdatedPath) {
+      newTask = await TaskFactory(updatedFilePath, request.server.config.dirPath)
+      request.updatePath(filePath, updatedFilePath, newTask)
     }
 
     return reply.redirect(`/view/${request.body.lane}/${filename}`)

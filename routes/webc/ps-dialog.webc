@@ -1,7 +1,7 @@
 <script webc:setup>
 	const buildAction = ({ relativePath }) => `/update/${relativePath}`;
 	const checkSelected = (lane, task) => {
-		lane === task.lane ? 'selected' : 'false';
+		return lane === task.lane;
 	}
 </script>
 
@@ -33,7 +33,7 @@
 		<form id="updateForm" method="post" :action="buildAction(task)">
 			<label for="lane">Lane</label>
 			<select id="lane" name="lane">
-				<option webc:for="lane of lanes" :selected="checkSelected(lane[0], task)" :value="lane[0]" @text="lane[1]">{{ lane[1] }}</option>
+        <option :value="lane[0]" @text="lane[1]" webc:for="lane of lanes" :selected="checkSelected(lane[0], task)"></option>
 			</select>
 
 			<button type="submit">Save</button>
