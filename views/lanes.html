@@ -1,0 +1,7 @@
+<reel-l itemWidth="calc((100dvw / 3) - var(--s-m))" space="var(--s-m)" style="width: 100%">
+  <% it.taskLanes.forEach(function(taskLane) { %>
+    <box-l padding="var(--s-xs)">
+      <%~ include('./task-lane.html', { taskLane }) %>
+    </box-l>
+  <% }) %>
+</reel-l>

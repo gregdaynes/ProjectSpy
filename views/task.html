@@ -1,19 +1,21 @@
-<div>
-  <header>
-    <h2><%= it.task.title %></h2>
-  </header>
+<box-l padding="var(--s-xs)">
+  <stack-l space="var(--s-xs)">
+    <header>
+      <h3><%= it.task.title %></h3>
+    </header>
 
-  <div>
-    <%~ it.task.descriptionHTML %>
+    <div>
+      <%~ it.task.descriptionHTML %>
 
-    <% it.task.tags.forEach(function(tag) { %>
-      <span><%= tag %></span>
-    <% }) %>
-  </div>
+      <% it.task.tags.forEach(function(tag) { %>
+        <span><%= tag %></span>
+      <% }) %>
+    </div>
 
-  <footer>
-    <% Object.entries(it.task.actions).forEach(function([label, value]) { %>
-      <a href="<%= value %>"><%= label %></a>
-    <% }) %>
-  </footer>
-</div>
+    <footer>
+      <% Object.entries(it.task.actions).forEach(function([label, value]) { %>
+        <a href="<%= value %>"><%= label %></a>
+      <% }) %>
+    </footer>
+  </stack-l>
+</box-l>

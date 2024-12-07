@@ -2,7 +2,7 @@
  * @module box-l
  * @description
  * A custom element for generic boxes/containers
- * @property {string} padding=var(--space-m) A CSS `padding` value
+ * @property {string} padding=var(--s-m) A CSS `padding` value
  * @property {string} borderWidth=var(--border-thin) A CSS `border-width` value
  * @property {boolean} invert=false Whether to apply an inverted theme. Only recommended for greyscale designs.
  */
@@ -35,7 +35,7 @@ export class Box extends HTMLElement {
   }
 
   get padding() {
-    return this.getAttribute('padding') || 'var(--space-m)';
+    return this.getAttribute('padding') || 'var(--s-m)';
   }
 
   set padding(val) {
@@ -178,7 +178,7 @@ if ('customElements' in window) {
  * A custom element for grouping items, with control over the margin between them
  * @property {string} justify=flex-start A CSS `justify-content` value
  * @property {string} align=flex-start A CSS `align-items` value
- * @property {string} space=var(--space-m) A CSS `gap` value. The minimum space between the clustered child elements.
+ * @property {string} space=var(--s-m) A CSS `gap` value. The minimum space between the clustered child elements.
  */
 export class Cluster extends HTMLElement {
   constructor() {
@@ -218,7 +218,7 @@ export class Cluster extends HTMLElement {
   }
 
   get space() {
-    return this.getAttribute('space') || 'var(--space-m)';
+    return this.getAttribute('space') || 'var(--s-m)';
   }
 
   set space(val) {
@@ -296,7 +296,7 @@ if ('customElements' in window) {
  * A custom element for covering a block-level element horizontally,
  * with a max-width value representing the typographic measure
  * @property {string} centered=h1 A simple selector such an element or class selector, representing the centered (main) element in the cover
- * @property {string} space=var(--space-m) The minimum space between and around all of the child elements
+ * @property {string} space=var(--s-m) The minimum space between and around all of the child elements
  * @property {string} minHeight=100vh The minimum height (block-size) for the **Cover**
  * @property {boolean} noPad=false Whether the spacing is also applied as padding to the container element
  */
@@ -345,7 +345,7 @@ export class Cover extends HTMLElement {
   }
 
   get space() {
-    return this.getAttribute('space') || 'var(--space-m)';
+    return this.getAttribute('space') || 'var(--s-m)';
   }
 
   set space(val) {
@@ -444,7 +444,7 @@ if ('customElements' in window) {
  * @description
  * A custom element for creating a responsive grid using the CSS Grid module
  * @property {string} min=250px A CSS length value representing x in `minmax(min(x, 100%), 1fr)`
- * @property {string} space=var(--space-m) The space between grid cells
+ * @property {string} space=var(--s-m) The space between grid cells
  */
 export class Grid extends HTMLElement {
   constructor() {
@@ -480,7 +480,7 @@ export class Grid extends HTMLElement {
   }
 
   get space() {
-    return this.getAttribute('space') || 'var(--space-m)';
+    return this.getAttribute('space') || 'var(--s-m)';
   }
 
   set space(val) {
@@ -783,7 +783,7 @@ if ('customElements' in window) {
  * @property {string} side=left Which element to treat as the sidebar (all values but "left" are considered "right")
  * @property {string} sideWidth Represents the width of the sidebar _when_ adjacent. If not set (`null`) it defaults to the sidebar's content width
  * @property {string} contentMin=50% A CSS **percentage** value. The minimum width of the content element in the horizontal configuration
- * @property {string} space=var(--space-m) A CSS margin value representing the space between the two elements
+ * @property {string} space=var(--s-m) A CSS margin value representing the space between the two elements
  * @property {boolean} noStretch=false Make the adjacent elements adopt their natural height
  */
 export class Sidebar extends HTMLElement {
@@ -844,7 +844,7 @@ export class Sidebar extends HTMLElement {
   }
 
   get space() {
-    return this.getAttribute('space') || 'var(--space-m)';
+    return this.getAttribute('space') || 'var(--s-m)';
   }
 
   set space(val) {
@@ -883,7 +883,7 @@ if ('customElements' in window) {
  * @description
  * A custom element for injecting white space (margin) between flow
  * (block) elements along a vertical axis.
- * @property {string} space=var(--space-m) A CSS `margin` value
+ * @property {string} space=var(--s-m) A CSS `margin` value
  * @property {boolean} recursive=false Whether the spaces apply recursively (i.e. regardless of nesting level)
  * @property {number} splitAfter=null The element after which to _split_ the stack with an auto margin
  */
@@ -917,7 +917,7 @@ export class Stack extends HTMLElement {
   }
 
   get space() {
-    return this.getAttribute('space') || 'var(--space-m)';
+    return this.getAttribute('space') || 'var(--s-m)';
   }
 
   set space(val) {
@@ -959,7 +959,7 @@ if ('customElements' in window) {
  * @module switcher-l
  * @description Switch directly between horizontal and vertical layouts at a given (container width-based) breakpoint or 'threshold'
  * @property {string} threshold=var(--measure) A CSS `width` value (representing the 'container breakpoint')
- * @property {string} space=var(--space-m) A CSS `margin` value
+ * @property {string} space=var(--s-m) A CSS `margin` value
  * @property {integer} limit=4 A number representing the maximum number of items permitted for a horizontal layout
  */
 export class Switcher extends HTMLElement {
@@ -998,7 +998,7 @@ export class Switcher extends HTMLElement {
   }
 
   get space() {
-    return this.getAttribute('space') || 'var(--space-m)';
+    return this.getAttribute('space') || 'var(--s-m)';
   }
 
   set space(val) {
