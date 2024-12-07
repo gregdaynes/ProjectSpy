@@ -1,4 +1,4 @@
-Auto Commit on Change
+Auto Commit on Changex
 =====================
 
 When a file is updated, we could make a commit to the working directory git repository (if there is one).

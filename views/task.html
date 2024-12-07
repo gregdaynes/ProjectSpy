@@ -1,4 +1,4 @@
-  <div class="box box--outlined">
+<div>
   <header>
     <h2><%= it.task.title %></h2>
   </header>
@@ -11,7 +11,7 @@
     <% }) %>
   </div>
 
-  <footer class="box-tight">
+  <footer>
     <% Object.entries(it.task.actions).forEach(function([label, value]) { %>
       <a href="<%= value %>"><%= label %></a>
     <% }) %>

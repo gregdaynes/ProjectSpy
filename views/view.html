@@ -1,0 +1,61 @@
+<% layout('./layout.html') %>
+
+<main>
+  <% it.taskLanes.forEach(function(taskLane) { %>
+    <%~ include('./task-lane.html', { taskLane }) %>
+  <% }) %>
+</main>
+
+<dialog open>
+	<header>
+    <h><%= it.task.filePath %></h3>
+
+		<form method="get" action="/">
+			<button type="submit">
+				<span>Close</span>
+			</button>
+		</form>
+	</header>
+
+	<div>
+    <!--<div><%~ it.task.content %></div>-->
+    <textarea name="content" id="content" form="updateForm"><%= it.task.rawContents %></textarea>
+	</div>
+
+	<footer>
+    <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
+			<label for="lane">Lane</label>
+			<select id="lane" name="lane">
+        <% it.lanes.forEach(lane => { %>
+        <option value="<%= lane[0] %>" <% if (it.task.lane === lane[0]) { %>selected<% } %>>
+          <%= lane[1] %>
+        </option>
+        <% }) %>
+			</select>
+
+			<button type="submit">Save</button>
+		</form>
+
+    <div>
+      <ul>
+        <% it.task.tags.forEach(tag => { %>
+          <li><%= tag %></li>
+        <% }) %>
+      </ul>
+    </div>
+	</footer>
+</dialog>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const dialog = document.querySelector('dialog');
+		dialog.removeAttribute('open');
+
+		dialog.showModal();
+
+		dialog.addEventListener('click', ({ target }) => {
+			target === dialog && dialog.close();
+			window.history.replaceState({}, '', '/');
+		});
+	});
+</script>
