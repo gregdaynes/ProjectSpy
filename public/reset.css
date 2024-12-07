@@ -1,0 +1,53 @@
+@layer reset {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    min-height: 100dvh;
+    line-height: var(--leading-standard);
+    -webkit-font-smoothing: antialiased;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    font-size-adjust: from-font;
+    font-family: var(--font-base);
+    font-size: var(--step-0);
+  }
+
+  img, svg {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  input, button, textarea, select {
+    font: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+    color: currentColor;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+
+  button {
+    all: unset;
+    cursor: pointer;
+
+  }
+
+  ol, ul {
+    &[role="list"] {
+      li {
+        list-style: none;
+      }
+    }
+  }
+}

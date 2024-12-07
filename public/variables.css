@@ -1,0 +1,63 @@
+/* @link https://utopia.fyi/type/calculator?c=320,16,1.2,1440,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+:root {
+  --step--2: clamp(0.6944rem, 0.6643rem + 0.1508vw, 0.8rem);
+  --step--1: clamp(0.8333rem, 0.7857rem + 0.2381vw, 1rem);
+  --step-0: clamp(1rem, 0.9286rem + 0.3571vw, 1.25rem);
+  --step-1: clamp(1.2rem, 1.0964rem + 0.5179vw, 1.5625rem);
+  --step-2: clamp(1.44rem, 1.2934rem + 0.733vw, 1.9531rem);
+  --step-3: clamp(1.728rem, 1.5242rem + 1.0192vw, 2.4414rem);
+  --step-4: clamp(2.0736rem, 1.7941rem + 1.3974vw, 3.0518rem);
+  --step-5: clamp(2.4883rem, 2.1094rem + 1.8948vw, 3.8147rem);
+}
+
+/* @link https://utopia.fyi/space/calculator?c=320,16,1.2,1440,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+:root {
+  --s-3xs: clamp(0.25rem, 0.2321rem + 0.0893vw, 0.3125rem);
+  --s-2xs: clamp(0.5rem, 0.4643rem + 0.1786vw, 0.625rem);
+  --s-xs: clamp(0.75rem, 0.6964rem + 0.2679vw, 0.9375rem);
+  --s-s: clamp(1rem, 0.9286rem + 0.3571vw, 1.25rem);
+  --s-m: clamp(1.5rem, 1.3929rem + 0.5357vw, 1.875rem);
+  --s-l: clamp(2rem, 1.8571rem + 0.7143vw, 2.5rem);
+  --s-xl: clamp(3rem, 2.7857rem + 1.0714vw, 3.75rem);
+  --s-2xl: clamp(4rem, 3.7143rem + 1.4286vw, 5rem);
+  --s-3xl: clamp(6rem, 5.5714rem + 2.1429vw, 7.5rem);
+
+  /* One-up pairs */
+  --s-3xs-2xs: clamp(0.25rem, 0.1429rem + 0.5357vw, 0.625rem);
+  --s-2xs-xs: clamp(0.5rem, 0.375rem + 0.625vw, 0.9375rem);
+  --s-xs-s: clamp(0.75rem, 0.6071rem + 0.7143vw, 1.25rem);
+  --s-s-m: clamp(1rem, 0.75rem + 1.25vw, 1.875rem);
+  --s-m-l: clamp(1.5rem, 1.2143rem + 1.4286vw, 2.5rem);
+  --s-l-xl: clamp(2rem, 1.5rem + 2.5vw, 3.75rem);
+  --s-xl-2xl: clamp(3rem, 2.4286rem + 2.8571vw, 5rem);
+  --s-2xl-3xl: clamp(4rem, 3rem + 5vw, 7.5rem);
+
+  /* Custom pairs */
+  --s-s-l: clamp(1rem, 0.5714rem + 2.1429vw, 2.5rem);
+}
+
+:root {
+  --font-display: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+  --font-base: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+  --font-mono: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+
+  --font-medium: 600;
+  --font-medium: 400;
+  --font-light: 300;
+
+  --leading-fine: 1.1;
+  --leading-standard: 1.5;
+
+  --color-highlight: #ff0;
+  --color-dark: #000;
+  --color-light: #fff;
+  --color-light-glare: #eee;
+  --color-mid: #999;
+  --color-primary: dodgerblue;
+  --color-focus: dodgerblue;
+  --focus-offset: 0.2lh;
+
+  --stroke: 1px solid;
+}
