@@ -1,4 +1,4 @@
-import { stat, glob } from 'node:fs/promises'
+import { glob } from 'node:fs/promises'
 import { join } from 'node:path'
 import fp from 'fastify-plugin'
 import TaskFactory from '../task.js'
@@ -14,9 +14,9 @@ export default fp(
       )
     }
 
-    function groupFilePathsByLane (filePaths) {
+    function groupFilePathsByLane () {
       return Object.groupBy(filePathsSorted, (entry) => {
-        const [_, lane, name] = entry.replace(dir, '').split('/')
+        const lane = entry.replace(dir, '').split('/')[1]
         return lane
       })
     }
@@ -31,7 +31,7 @@ export default fp(
 
     fastify.addHook('onReady', async () => {
       for await (const entry of glob(join(dir, '/**/*'))) {
-        const [_, lane, name] = entry.replace(dir, '').split('/')
+        const [, lane, name] = entry.replace(dir, '').split('/')
 
         if (lanes.includes(lane) && name) {
           const task = await TaskFactory(entry, dir)

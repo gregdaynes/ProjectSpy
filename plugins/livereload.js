@@ -29,7 +29,7 @@ export default fp(async (fastify, opts) => {
   })
 
   fastify.get('/livereload.js', (req, reply) => {
-    const filePath = join(import.meta.dirname, '..', 'vendor', 'livereload.4_0_2.min.js')
+    const filePath = join(import.meta.dirname, import.meta.resolve('livereload-js').split(import.meta.dirname)[1])
 
     const stream = createReadStream(filePath, 'utf8')
     reply.header('Content-Type', 'text/javascript; charset=utf-8')
