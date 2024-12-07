@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+	<head>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title><%= it.page.title %></title>
+
+    <link rel="stylesheet" href="/assets/critical.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <script type="module">
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.register('/assets/sw.js')
+          console.log('Service worker registered successfully');
+        } catch (err) {
+          console.error('Error during service worker registration:', e);
+        }
+      }
+    </script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#000000">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="theme-color" content="#000000">
+  </head>
+
+	<body>
+    <header class="box">
+      <h1>ProjectSpy</h1>
+    </header>
+
+    <%~ it.body %>
+	</body>
+</html>

@@ -1,0 +1,239 @@
+@layer reset, defaults, layouts, components, utilities;
+
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+  font-weight: normal;
+
+  --measure: 60ch;
+
+  --color-dark: light-dark(black, white);
+  --color-light: light-dark(white, black);
+  --color-blue: light-dark(blue, dodgerblue);
+  --color-green: light-dark(green, limegreen);
+  --color-red: light-dark(red, orangered);
+  --color-yellow: light-dark(yellow, gold);
+
+  --ratio: 1.5;
+  --s-5: calc(var(--s-4) / var(--ratio));
+  --s-4: calc(var(--s-3) / var(--ratio));
+  --s-3: calc(var(--s-2) / var(--ratio));
+  --s-2: calc(var(--s-1) / var(--ratio));
+  --s-1: calc(var(--s0) / var(--ratio));
+  --s0: 1rem;
+  --s1: calc(var(--s0) * var(--ratio));
+  --s2: calc(var(--s1) * var(--ratio));
+  --s3: calc(var(--s2) * var(--ratio));
+  --s4: calc(var(--s3) * var(--ratio));
+  --s5: calc(var(--s4) * var(--ratio));
+
+  --font-size-base: 1rem;
+  --font-size-biggish: 1.75rem;
+  --font-size-big: 2.25rem;
+}
+
+@layer reset {
+  /* Box sizing rules */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    max-inline-size: var(--measure);
+  }
+
+  html,
+  body, 
+  div,
+  header,
+  nav,
+  main,
+  footer {
+    max-inline-size: none;
+  }
+
+  /* Prevent font size inflation */
+  html {
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+
+  /* Remove default margin in favour of better control in authored CSS */
+  body, h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
+    margin: 0;
+  }
+
+  /* Set core body defaults */
+  body {
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* This makes the elements full screen while keeping the scrolling smooth. */
+  body, html{
+    scroll-behavior: smooth; 
+  }
+
+  /* Set shorter line heights on headings and interactive elements */
+  h1, h2, h3, h4, h5, h6, button, input, label {
+    line-height: 1.1;
+  }
+
+  /* Balance text wrapping on headings */
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  /* A elements that don't have a class get default styles */
+  a:not([class]) {
+    text-decoration-skip-ink: auto;
+    color: currentColor;
+  }
+
+  /* Make images easier to work with */
+  img, picture {
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Italicize image alt text */
+  img, picture, svg, video, canvas{
+    font-style: italic; 
+  }
+
+  img, picture, svg, video, canvas{
+    vertical-align: middle; 
+  }
+
+  /* Inherit fonts for inputs and buttons */
+  input, button, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  /* Make sure textareas without a rows attribute are not tiny */
+  textarea:not([rows]) {
+    min-height: 10em;
+  }
+
+  /* Anything that has been anchored to should have extra scroll margin */
+  :target {
+    scroll-margin-block: 5ex;
+  }
+}
+
+@layer defaults {
+
+}
+
+@layer layouts {
+  .box {
+    --padding: var(--s1);
+    padding: var(--padding);
+  }
+
+  .box--tight {
+    --padding: var(--s-2);
+  }
+
+  .box--outlined {
+    outline: var(--s-5) solid currentColor;
+    outline-offset: calc(var(--s-5) * -1);
+  }
+
+  .box--sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  .box--no-padding {
+    --padding: 0;
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--gap, var(--s1));
+  }
+
+  .stack--tight > * + * {
+    --gap: var(--s-5);
+  }
+
+  .reel {
+    gap: var(--gap, var(--s1));
+    display: flex;
+    overflow: scroll;
+
+    > * {
+      min-width: calc(100% / 3 - var(--gap, var(--s1)));
+    }
+  }
+}
+
+@layer components {
+  body {
+    padding: 1rem;
+    height: 100dvh;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+
+    > * {
+      flex: 1 1 auto;
+    }
+  }
+
+  main {
+    max-height: 100%;
+  }
+
+  .lane {
+    height: 100%;
+    overflow: hidden;
+
+    > header {
+      border-bottom: var(--s-5) solid currentColor;
+
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        inset: 0 var(--s-5) calc((var(--s1) * -1) - 1px);
+        background-image: linear-gradient(to bottom, transparent calc(100% - var(--s1)), light-dark(rgb(0,0,0,0.1), rgb(0,0,0,0.3)) calc(100% - var(--s1)), transparent);
+      }
+    }
+    
+    > div {
+      height: 100%;
+      overflow: scroll;
+    }
+  }
+}
+
+@layer utilities {
+  .font-size\:base {
+    font-size: var(--font-size-base);
+  }
+
+  .font-size\:base {
+    font-size: var(--font-size-bigish);
+  }
+
+  .font-size\:big {
+    font-size: var(--font-size-big);
+  }
+
+  .max-inline-size\:measure {
+    max-inline-size: var(--measure);
+  }
+
+  .max-inline-size\:measure\/2 {
+    max-inline-size: calc(var(--measure) / 2);
+  }
+}
+

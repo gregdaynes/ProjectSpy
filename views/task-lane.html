@@ -1,0 +1,13 @@
+<div class="lane box box--no-padding box--outlined">
+  <header class="box box--sticky ">
+    <h2><%= it.taskLane.name %></h2>
+  </header>
+
+  <div class="stack box">
+    <% it.taskLane.tasks.forEach(function(task) { %>
+      <%~ include('./task.html', { task }) %>
+    <% }) %>
+  </div>
+
+  <footer></footer>
+</div>

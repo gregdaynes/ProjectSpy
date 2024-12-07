@@ -1,0 +1,7 @@
+<% layout('./layout.html') %>
+
+<main class="reel">
+  <% it.taskLanes.forEach(function(taskLane) { %>
+  <%~ include('./task-lane.html', { taskLane }) %>
+  <% }) %>
+</main>
