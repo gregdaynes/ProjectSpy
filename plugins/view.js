@@ -26,6 +26,10 @@ export default fp(
         pathsToExcludeHtmlMinifier: ['/test'],
       },
       root: join(import.meta.dirname, '..', 'views'),
+      send: {
+        lastModified: true,
+        maxAge: 300000,
+      },
       viewExt: 'html',
       defaultContext: {
         flash: [],
