@@ -4,9 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"type": "module",
-  "bin": {
-    "projectspy": "./bin/server.js"
-  },
+	"bin": {
+		"projectspy": "./bin/server.js"
+	},
 	"scripts": {
 		"start": "fastify start -l debug -p 3000 -a 0.0.0.0 -P -o -w --ignore-watch='.git .projectspy views public' index.js",
 		"test": "eslint . && node --test",
@@ -40,6 +40,7 @@
 		"livereload-js": "^4.0.2",
 		"marked": "^15.0.3",
 		"open": "^10.1.0",
+		"slugify": "^1.6.6",
 		"thenby": "^1.3.4"
 	}
 }

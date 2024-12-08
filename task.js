@@ -34,7 +34,7 @@ export class Task {
     const modifiedFileContents = this.#contents.split('\n')
 
     modifiedFileContents[0] = this.markdownTitle
-    if (modifiedFileContents[1].includes('--') || modifiedFileContents[1].includes('==')) {
+    if (modifiedFileContents[1] && (modifiedFileContents[1].includes('--') || modifiedFileContents[1].includes('=='))) {
       modifiedFileContents[1] = undefined
     }
 

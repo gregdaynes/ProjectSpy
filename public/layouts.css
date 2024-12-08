@@ -172,7 +172,7 @@ dialog {
   }
 
   header {
-    h3 {
+    h3, input {
       grid-column: 2 / 2;
     }
 

@@ -3,7 +3,11 @@
       <header>
         <box-l padding="var(--s-xs)" borderWidth=0>
           <grid-with-sidebars-l>
-            <h3><%= it.task.filePath %></h3>
+            <% if (it.task.filePath) { %>
+              <h3><%= it.task.filePath %></h3>
+            <% } else { %>
+              <input type="text" name="name" id="name" form="updateForm">
+            <% } %>
 
             <form method="get" action="/">
               <button type="submit">
