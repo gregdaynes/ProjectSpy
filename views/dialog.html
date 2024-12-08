@@ -1,4 +1,3 @@
-<imposter-l>
   <dialog open>
     <cover-l centered="[primary-element]" minHeight="100%" noPad=true space=0>
       <header>
@@ -22,36 +21,39 @@
 
       <footer>
         <box-l padding="var(--s-xs)" borderWidth=0>
-          <sidebar-l side=right>
-            <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
-              <sidebar-l side=right>
-                <select aria-label="lane" id="lane" name="lane">
-                  <% it.lanes.forEach(lane => { %>
-                  <option value="<%= lane[0] %>" <% if (it.task.lane === lane[0]) { %>selected<% } %>>
-                  <%= lane[1] %>
-                  </option>
-                  <% }) %>
-                </select>
-
-                <button type="submit">Save</button>
-              </sidebar-l>
-            </form>
+          <cluster-l align=center justify="space-between" role="list">
+            <% if (it.task.priority) { %>
+              <box-l padding="var(--s-3xs)" role="listitem">Priority <%= it.task.priority %></box-l>
+            <% } %>
 
             <% if (it.task.tags.length > 0) { %>
-              <div>
-                <ul>
-                  <% it.task.tags.forEach(tag => { %>
-                    <li><%= tag %></li>
-                  <% }) %>
-                </ul>
-              </div>
+              <cluster-l align=center role="list">
+                <% it.task.tags.forEach(tag => { %>
+                  <box-l padding="var(--s-3xs)" role="listitem"><%= tag %></box-l>
+                <% }) %>
+              </cluster-l>
             <% } %>
-          </sidebar-l>
+          </cluster-l>
+        </box-l>
+
+        <box-l padding="var(--s-xs)" borderWidth=0>
+          <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
+            <sidebar-l side=right>
+              <select aria-label="lane" id="lane" name="lane">
+                <% it.lanes.forEach(lane => { %>
+                <option value="<%= lane[0] %>" <% if (it.task.lane === lane[0]) { %>selected<% } %>>
+                <%= lane[1] %>
+                </option>
+                <% }) %>
+              </select>
+
+              <button type="submit">Save</button>
+            </sidebar-l>
+          </form>
         </box-l>
       </footer>
     </cover-l>
   </dialog>
-</imposter-l>
 
 <script>
 	document.addEventListener('DOMContentLoaded', () => {
@@ -61,8 +63,10 @@
 		dialog.showModal();
 
 		dialog.addEventListener('click', ({ target }) => {
-			target === dialog && dialog.close();
-			window.history.replaceState({}, '', '/');
+	     if (target === dialog) {
+	       dialog.close();
+	       window.history.replaceState({}, '', '/');
+	     }
 		});
 	});
 </script>

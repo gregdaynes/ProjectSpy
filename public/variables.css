@@ -61,6 +61,8 @@
 
   --border-thin: 0.0675rem;
   --stroke: var(--border-thin) solid;
+  --stroke-medium: calc(var(--border-thin) * 2) solid;
+  --stroke-thick: calc(var(--border-thin) * 3) solid;
 
   --measure: 1440px;
 }
