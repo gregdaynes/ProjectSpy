@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   dialog.addEventListener('click', ({ target }) => {
     if (target === dialog) {
       dialog.close();
-      window.history.replaceState({}, '', '/');
     }
+  });
+
+  dialog.addEventListener('close', () => {
+    window.history.replaceState({}, '', '/');
   });
 });
