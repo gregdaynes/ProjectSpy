@@ -8,7 +8,7 @@ export default fp(
   async function (fastify) {
     function sortFilePathsByTask (taskList, filePaths) {
       return filePaths.sort(
-        firstBy((a, b) => taskList.get(a).priority - taskList.get(b).priority)
+        firstBy((a, b) => taskList.get(a).priority - taskList.get(b).priority, -1)
           .thenBy((a, b) => taskList.get(a).manualOrder - taskList.get(b).manualOrder)
           .thenBy((a, b) => taskList.get(a).modified - taskList.get(b).modified)
       )

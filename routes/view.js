@@ -15,6 +15,7 @@ export default async function (fastify) {
       title: task.title,
       descriptionHTML: task.descriptionHTML,
       tags: task.tags || [],
+      priority: task.priority,
       actions: {
         view: `/view/${task.relativePath}`,
       },
@@ -43,7 +44,6 @@ export default async function (fastify) {
       page: {
         title: 'Task',
       },
-
       task: {
         ...builtTask,
         content: task.render(),

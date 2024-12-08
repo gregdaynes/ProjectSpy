@@ -1,4 +1,4 @@
-!!!CLI Command to bootstrap directory
+!CLI Command to bootstrap directory
 ===
 
 If possible, set up a few run commands that will create .projectspy directory where run
