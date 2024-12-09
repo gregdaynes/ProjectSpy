@@ -4,6 +4,7 @@ import AutoLoad from '@fastify/autoload'
 
 export default fp(async function app (fastify, opts) {
   await fastify.register(import('./plugins/config.no-load.js'), structuredClone(opts))
+  await fastify.register(import('./plugins/cmd.js'), structuredClone(opts))
   await fastify.register(import('./plugins/assets.js'), structuredClone(opts))
   await fastify.register(import('./plugins/formbody.js'), structuredClone(opts))
   await fastify.register(import('./plugins/view.js'), structuredClone(opts))
