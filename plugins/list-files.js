@@ -58,6 +58,14 @@ export default fp(
       filePathsSorted = sortFilePathsByTask(taskList, filePaths)
       filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
     })
+
+    fastify.decorateRequest('deletePath', function(path) {
+      taskList.delete(path)
+      filePaths = filePaths.filter((oldPath) => oldPath !== path)
+
+      filePathsSorted = sortFilePathsByTask(taskList, filePaths)
+      filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
+    })
   },
 
   {

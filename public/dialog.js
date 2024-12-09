@@ -1,16 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const dialog = document.querySelector('dialog');
-  dialog.removeAttribute('open');
+  const dialogs = document.querySelectorAll('dialog');
 
-  dialog.showModal();
+  for (const dialog of dialogs) {
+    dialog.removeAttribute('open');
 
-  dialog.addEventListener('click', ({ target }) => {
-    if (target === dialog) {
-      dialog.close();
-    }
-  });
+    dialog.showModal();
 
-  dialog.addEventListener('close', () => {
-    window.history.replaceState({}, '', '/');
-  });
+    dialog.addEventListener('click', ({ target }) => {
+      if (target === dialog) {
+        dialog.close();
+      }
+    });
+
+    dialog.addEventListener('close', (e) => {
+      if (e.target.classList.contains('confirm')) {
+        const current = window.location.href
+        window.history.replaceState({}, '', current.replace('/delete/', '/view/'));
+      } else {
+        window.history.replaceState({}, '', '/');
+      }
+    });
+  }
 });

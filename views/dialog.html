@@ -51,7 +51,19 @@
                 <% }) %>
               </select>
 
-              <button type="submit">Save</button>
+              <box-l padding=0>
+                <button-group>
+                  <button type="submit">Save</button>
+
+                  <details class="dropdown">
+                    <summary></summary>
+
+                    <box-l padding=0>
+                      <button type="submit" formmethod="get" formaction="/delete/<%= it.task.filePath %>">Delete</button>
+                    </box-l>
+                  </details>
+                </button-group>
+              </box-l>
             </sidebar-l>
           </form>
         </box-l>
