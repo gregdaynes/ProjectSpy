@@ -10,31 +10,19 @@ export default async function (fastify) {
       return reply.redirect('/')
     }
 
-    const buildTask = task => ({
-      relativePath: task.relativePath,
-      title: task.title,
-      descriptionHTML: task.descriptionHTML,
-      tags: task.tags || [],
-      priority: task.priority,
-      actions: {
-        view: `/view/${task.relativePath}`,
-      },
-    })
-
     const filePathsGroupedByLane = request.filePathsGroupedByLane()
     const taskLanes = request.server.config.lanes.map(([lane, name]) => {
       return {
         name,
         tasks: filePathsGroupedByLane[lane]?.map((filePath) => {
           const task = request.taskList().get(filePath)
-          return buildTask(task)
+          return request.buildTask(task)
         }) || [],
       }
     })
 
-    const builtTask = buildTask(task)
+    const builtTask = request.buildTask(task)
     builtTask.actions.update = `/update/${task.relativePath}`
-
 
     const data = {
       ...reply.locals,

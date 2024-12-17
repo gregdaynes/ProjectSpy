@@ -4,23 +4,12 @@ import { join } from 'node:path'
 export default async function (fastify) {
   fastify.get('/delete/:lane/:filename', async (request, reply) => {
     const { lane, filename } = request.params
-    const filePath = join(request.server.config.dirPath, lane, filename)
+    const filePath = join(request.dir, lane, filename)
 
     const task = request.taskList().get(filePath)
     if (task === undefined) {
       return reply.redirect('/')
     }
-
-    const buildTask = task => ({
-      relativePath: task.relativePath,
-      title: task.title,
-      descriptionHTML: task.descriptionHTML,
-      tags: task.tags || [],
-      priority: task.priority,
-      actions: {
-        view: `/view/${task.relativePath}`,
-      },
-    })
 
     const filePathsGroupedByLane = request.filePathsGroupedByLane()
     const taskLanes = request.server.config.lanes.map(([lane, name]) => {
@@ -28,12 +17,12 @@ export default async function (fastify) {
         name,
         tasks: filePathsGroupedByLane[lane]?.map((filePath) => {
           const task = request.taskList().get(filePath)
-          return buildTask(task)
+          return request.buildTask(task)
         }) || [],
       }
     })
 
-    const builtTask = buildTask(task)
+    const builtTask = request.buildTask(task)
     builtTask.actions.update = `/update/${task.relativePath}`
 
     const data = {
@@ -60,26 +49,13 @@ export default async function (fastify) {
   fastify.post('/delete/:lane/:filename', async (request, reply) => {
     const { lane, filename } = request.params
     const safeName = filename.replace('/', '_')
-    const filePath = join(request.server.config.dirPath, lane, safeName)
+    const filePath = join(request.dir, lane, safeName)
 
-    const exists = await pathExists(filePath)
+    const exists = await request.pathExists(filePath)
     if (exists) await fs.unlink(filePath)
 
     request.deletePath(filePath)
 
     return reply.redirect('/')
   })
-}
-
-async function pathExists (path) {
-  try {
-    await fs.stat(path)
-    return true
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      return false
-    }
-
-    throw new Error(err)
-  }
 }

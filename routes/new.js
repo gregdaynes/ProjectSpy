@@ -7,10 +7,10 @@ export default async function (fastify) {
   fastify.post('/create', {
 
   }, async (request, reply) => {
-    let { lane, content, name } = request.body
+    const { lane, content, name } = request.body
     const filename = slugify(name, { strict: true, lower: true }) + '.md'
 
-    const filePath = join(request.server.config.dirPath, lane, filename)
+    const filePath = join(request.dir, lane, filename)
 
     await writeFile(filePath, content)
     const newTask = await TaskFactory(filePath, request.server.config.dirPath)
@@ -35,23 +35,12 @@ export default async function (fastify) {
     const { lane } = request.query
     const filePathsGroupedByLane = request.filePathsGroupedByLane()
 
-    const buildTask = task => ({
-      relativePath: task.relativePath,
-      title: task.title,
-      descriptionHTML: task.descriptionHTML,
-      tags: task.tags || [],
-      priority: task.priority,
-      actions: {
-        view: `/view/${task.relativePath}`,
-      },
-    })
-
     const taskLanes = request.server.config.lanes.map(([lane, name]) => {
       return {
         name,
         tasks: filePathsGroupedByLane[lane]?.map((filePath) => {
           const task = request.taskList().get(filePath)
-          return buildTask(task)
+          return request.buildTask(task)
         }) || [],
       }
     })
