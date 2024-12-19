@@ -28,7 +28,7 @@ export default fp(
       root: join(import.meta.dirname, '..', 'views'),
       send: {
         lastModified: true,
-        maxAge: 300000,
+        maxAge: fastify.config.maxAge,
       },
       viewExt: 'html',
       defaultContext: {

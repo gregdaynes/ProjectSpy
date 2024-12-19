@@ -2,7 +2,7 @@ export default async function root (fastify, _opts) {
   fastify.get('/manifest.json', function manifestHandler (request, reply) {
     reply.header(
       'cache-control',
-      `public, max-age=${request.server.config.STATIC_MAX_AGE}`
+      `public, max-age=${request.config.maxAge}`
     )
 
     return {

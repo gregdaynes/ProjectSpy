@@ -1,50 +1,69 @@
 import { join } from 'node:path'
-import { writeFile, unlink, readFile } from 'node:fs/promises'
-import TaskFactory from '../task.js'
+import { readFile } from 'node:fs/promises'
 
 export default async function (fastify) {
-  fastify.post('/update/:lane/:filename', async (request, reply) => {
-    let { lane, filename } = request.params
+  fastify.post('/update/:lane/:filename', {
+    schema: {
+      params: {
+        $id: 'app:update:params',
+        type: 'object',
+        properties: {
+          lane: {
+            type: 'string',
+          },
+          filename: {
+            type: 'string',
+          },
+        },
+        required: ['lane', 'filename']
+      },
+      body: {
+        $id: 'app:update:body',
+        type: 'object',
+        properties: {
+          lane: {
+            type: 'string',
+          },
+          content: {
+            type: 'string',
+          },
+        },
+        required: ['lane', 'content']
+      }
+    },
+    preHandler: [
+      fastify.preHandlerParams,
+    ]
+  }, async (request, reply) => {
+    const { lane: currentLane, filename, filePath } = request.ctx
+    const { lane: updatedLane, content: updatedContent } = request.body
 
-    const filePath = join(request.server.config.dirPath, lane, filename)
-    // const task = request.taskList().get(filePath)
-    const fileContents = await readFile(filePath, { encoding: 'utf-8' })
+    const fileContent = await readFile(filePath, { encoding: 'utf-8' })
 
-    // Things that change
-    // TODO this is gonna be rough. We should clean and hash both to determine if they are the same
-    const updatedContents = request.body.content
     let updatedFilePath = filePath
-    let hasUpdatedContent = false
-    let hasUpdatedPath = false
-    let newTask
-
-    if (fileContents !== updatedContents) {
-      hasUpdatedContent = true
-    }
+    const hasUpdatedContent = fileContent !== updatedContent
+    const hasUpdatedPath = currentLane !== updatedLane
 
     // move the file if the lane has changed
-    if (lane !== request.body.lane) {
-      hasUpdatedPath = true
-      lane = request.body.lane
-      updatedFilePath = join(request.server.config.dirPath, lane, filename)
+    if (hasUpdatedPath) {
+      updatedFilePath = join(request.server.config.dirPath, updatedLane, filename)
     }
 
     // Write file changes including new file if moved
     if (hasUpdatedContent || hasUpdatedPath) {
-      await writeFile(updatedFilePath, updatedContents)
+      await request.server.writeFile({
+        lane: updatedLane,
+        filename,
+        filePath: updatedFilePath,
+        contents: updatedContent
+      })
     }
 
     // delete the old file
     if (hasUpdatedPath) {
-      await unlink(filePath)
+      await request.server.deleteFile({ filename, lane: currentLane, filePath })
     }
 
-    // update the task in the taskList
-    if (hasUpdatedContent || hasUpdatedPath) {
-      newTask = await TaskFactory(updatedFilePath, request.server.config.dirPath)
-      request.updatePath(filePath, updatedFilePath, newTask)
-    }
-
-    return reply.redirect(`/view/${request.body.lane}/${filename}`)
+    return reply.redirect(`/view/${updatedLane}/${filename}`)
   })
 }

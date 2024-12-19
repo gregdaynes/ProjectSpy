@@ -12,7 +12,6 @@
       if ('serviceWorker' in navigator) {
         try {
           const registration = await navigator.serviceWorker.register('/assets/sw.js')
-          console.log('Service worker registered successfully');
         } catch (err) {
           console.error('Error during service worker registration:', e);
         }

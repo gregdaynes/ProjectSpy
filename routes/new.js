@@ -1,22 +1,44 @@
 import { join } from 'node:path'
 import { writeFile } from 'node:fs/promises'
-import TaskFactory from '../task.js'
 import slugify from 'slugify'
 
 export default async function (fastify) {
   fastify.post('/create', {
-
+    schema: {
+      body: {
+        $id: 'app:new:body',
+        type: 'object',
+        properties: {
+          lane: {
+            type: 'string'
+          },
+          content: {
+            type: 'string',
+          },
+          name: {
+            type: 'string'
+          }
+        },
+        required: ['lane', 'name']
+      }
+    }
   }, async (request, reply) => {
     const { lane, content, name } = request.body
+
     const filename = slugify(name, { strict: true, lower: true }) + '.md'
 
-    const filePath = join(request.dir, lane, filename)
+    const filePath = join(request.config.dirPath, lane, filename)
+
+    const { promise, resolve, reject } = Promise.withResolvers()
+
+    request.eventBus.on(`task:add:${lane}:${filename}`, () => {
+      reply.redirect(`/view/${lane}/${filename}`)
+      resolve()
+    })
 
     await writeFile(filePath, content)
-    const newTask = await TaskFactory(filePath, request.server.config.dirPath)
-    request.updatePath(filePath, filePath, newTask)
 
-    return reply.redirect(`/view/${request.body.lane}/${filename}`)
+    return promise
   })
 
   fastify.get('/new', {
@@ -30,28 +52,18 @@ export default async function (fastify) {
           }
         }
       }
-    }
+    },
+    preHandler: [
+      fastify.preHandlerTaskLanes
+    ]
   }, async (request, reply) => {
     const { lane } = request.query
-    const filePathsGroupedByLane = request.filePathsGroupedByLane()
-
-    const taskLanes = request.server.config.lanes.map(([lane, name]) => {
-      return {
-        name,
-        tasks: filePathsGroupedByLane[lane]?.map((filePath) => {
-          const task = request.taskList().get(filePath)
-          return request.buildTask(task)
-        }) || [],
-      }
-    })
-
     const data = {
       ...reply.locals,
       page: {
         title: 'New Task',
       },
-      taskLanes,
-      lanes: request.server.config.lanes,
+      lanes: request.config.lanes,
       task: {
         task: 'New Task',
         content: '',

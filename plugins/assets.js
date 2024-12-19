@@ -14,6 +14,10 @@ export default fp(
     fastify.register(staticFiles, {
       root: join(import.meta.dirname, '..', 'public'),
       prefix: '/assets/',
+      send: {
+        lastModified: true,
+        maxAge: fastify.config.maxAge,
+      },
     })
   },
   {

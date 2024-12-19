@@ -1,75 +1,59 @@
-import { glob } from 'node:fs/promises'
 import { join } from 'node:path'
 import fp from 'fastify-plugin'
 import TaskFactory from '../task.js'
-import firstBy from 'thenby'
+import chokidar from 'chokidar'
 
 export default fp(
   async function (fastify) {
-    function sortFilePathsByTask (taskList, filePaths) {
-      return filePaths.sort(
-        firstBy((a, b) => taskList.get(a).priority - taskList.get(b).priority, -1)
-          .thenBy((a, b) => taskList.get(a).manualOrder - taskList.get(b).manualOrder)
-          .thenBy((a, b) => taskList.get(a).modified - taskList.get(b).modified)
-      )
-    }
-
-    function groupFilePathsByLane () {
-      return Object.groupBy(filePathsSorted, (entry) => {
-        const lane = entry.replace(dir, '').split('/')[1]
-        return lane
-      })
-    }
-
-    const dir = fastify.config.dirPath
+    const dir = join(process.cwd(), fastify.config.dirPath)
     const lanes = fastify.config.lanes.map(([lane]) => lane)
     const taskList = new Map()
 
-    let filePaths = []
-    let filePathsSorted = []
-    let filePathsGroupedByLane = {}
+    // each lane should be it's own map
+    for (const lane of lanes) {
+      taskList.set(lane, new Map())
+    }
 
     fastify.addHook('onReady', async () => {
-      for await (const entry of glob(join(dir, '/**/*'))) {
-        const [, lane, name] = entry.replace(dir, '').split('/')
+      const watcher = chokidar.watch(dir, {
+        ignored: (path, stats) => stats?.isFile() && !path.endsWith('.md'), // only watch md files
+        persistent: true
+      })
 
-        if (lanes.includes(lane) && name) {
-          const task = await TaskFactory(entry, dir)
+      watcher.on('add', async function (path) {
+        const [, lane, filename] = path.replace(dir, '').split('/')
 
-          taskList.set(entry, task)
-          filePaths.push(entry)
-        }
-      }
+        const task = await TaskFactory(path, dir)
+        taskList.get(lane).set(filename, task)
 
-      filePathsSorted = sortFilePathsByTask(taskList, filePaths)
-      filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
+        fastify.eventBus().emit(`task:add:${lane}:${filename}`)
+      })
+
+      watcher.on('change', async function (path) {
+        const [, lane, filename] = path.replace(dir, '').split('/')
+
+        const task = await TaskFactory(path, dir)
+        taskList.get(lane).set(filename, task)
+      })
+
+      watcher.on('unlink', function (path) {
+        const [, lane, filename] = path.replace(dir, '').split('/')
+
+        taskList.get(lane).delete(filename)
+
+        fastify.eventBus().emit(`task:delete:${lane}:${filename}`)
+      })
+
+      watcher.on('error', function (err) {
+        fastify.log.error({ err }, 'File change error')
+      })
     })
 
-    fastify.decorateRequest('taskList', () => taskList)
-    fastify.decorateRequest('filePathsGroupedByLane', () => filePathsGroupedByLane)
-
-    fastify.decorateRequest('updatePath', function (oldPath, newPath, newTask) {
-      taskList.delete(oldPath)
-      taskList.set(newPath, newTask)
-
-      filePaths = filePaths.filter((path) => path !== oldPath)
-      filePaths.push(newPath)
-
-      filePathsSorted = sortFilePathsByTask(taskList, filePaths)
-      filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
-    })
-
-    fastify.decorateRequest('deletePath', function(path) {
-      taskList.delete(path)
-      filePaths = filePaths.filter((oldPath) => oldPath !== path)
-
-      filePathsSorted = sortFilePathsByTask(taskList, filePaths)
-      filePathsGroupedByLane = groupFilePathsByLane(filePathsSorted)
-    })
+    fastify.decorate('taskList', () => taskList)
   },
 
   {
     name: 'list-files',
-    dependencies: ['application-config'],
+    dependencies: ['application-config', 'application-events'],
   }
 )

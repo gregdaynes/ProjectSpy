@@ -111,7 +111,7 @@ export default async function TaskFactory (filePath, dirPath) {
   const relativePath = filePath.replace(join(dirPath, '/'), '')
   const [, lane, filename] = filePath.split(dirPath)[1].split('/')
 
-  return new Task(join(process.cwd(), filePath), {
+  return new Task(join(filePath), {
     filename,
     lane,
     title,

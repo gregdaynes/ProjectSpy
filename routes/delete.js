@@ -1,34 +1,30 @@
-import fs from 'node:fs/promises'
-import { join } from 'node:path'
-
 export default async function (fastify) {
-  fastify.get('/delete/:lane/:filename', async (request, reply) => {
-    const { lane, filename } = request.params
-    const filePath = join(request.dir, lane, filename)
-
-    const task = request.taskList().get(filePath)
-    if (task === undefined) {
-      return reply.redirect('/')
-    }
-
-    const filePathsGroupedByLane = request.filePathsGroupedByLane()
-    const taskLanes = request.server.config.lanes.map(([lane, name]) => {
-      return {
-        name,
-        tasks: filePathsGroupedByLane[lane]?.map((filePath) => {
-          const task = request.taskList().get(filePath)
-          return request.buildTask(task)
-        }) || [],
+  fastify.get('/delete/:lane/:filename', {
+    schema: {
+      params: {
+        $id: 'app:delete:params',
+        type: 'object',
+        properties: {
+          lane: {
+            type: 'string',
+          },
+          filename: {
+            type: 'string',
+          },
+        },
+        required: ['lane', 'filename']
       }
-    })
-
-    const builtTask = request.buildTask(task)
-    builtTask.actions.update = `/update/${task.relativePath}`
+    },
+    preHandler: [
+      fastify.preHandlerParams,
+      fastify.preHandlerTask,
+      fastify.preHandlerTaskLanes,
+    ]
+  }, async (request, reply) => {
+    const { lane, task, builtTask } = request.ctx
 
     const data = {
       ...reply.locals,
-      taskLanes,
-      tasks: request.taskList(),
       lanes: request.server.config.lanes,
       page: {
         title: 'Task',
@@ -46,15 +42,34 @@ export default async function (fastify) {
     return reply.view('view', data)
   })
 
-  fastify.post('/delete/:lane/:filename', async (request, reply) => {
-    const { lane, filename } = request.params
-    const safeName = filename.replace('/', '_')
-    const filePath = join(request.dir, lane, safeName)
+  fastify.post('/delete/:lane/:filename', {
+    schema: {
+      params: {
+        $id: 'app:delete:params:post',
+        type: 'object',
+        properties: {
+          lane: {
+            type: 'string',
+          },
+          filename: {
+            type: 'string',
+          },
+        },
+        required: ['lane', 'filename']
+      }
+    },
+    preHandler: [
+      fastify.preHandlerParams,
+    ]
+  }, async (request, reply) => {
+    const { lane, filename, filePath } = request.ctx
 
-    const exists = await request.pathExists(filePath)
-    if (exists) await fs.unlink(filePath)
+    const exists = await request.server.pathExists(filePath)
+    if (!exists) {
+      return reply.redirect('/')
+    }
 
-    request.deletePath(filePath)
+    await request.server.deleteFile({ filename, lane, filePath })
 
     return reply.redirect('/')
   })
