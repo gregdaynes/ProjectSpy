@@ -4,7 +4,7 @@
         <box-l padding="var(--s-xs)" borderWidth=0>
           <grid-with-sidebars-l>
             <% if (it.task.filePath) { %>
-              <h3><%= it.task.filePath %></h3>
+              <h3><%= it.task.title %></h3>
             <% } else { %>
               <input type="text" name="name" id="name" form="updateForm">
             <% } %>
