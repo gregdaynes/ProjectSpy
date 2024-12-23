@@ -42,6 +42,7 @@ export default function (fastify, opts) {
     for (const [slug, name] of request.config.lanes) {
       const lane = {
         name,
+        slug,
         tasks: [...request.taskList().get(slug)].map(task => request.buildTask(task[1]))
       }
 

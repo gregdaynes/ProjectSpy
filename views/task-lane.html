@@ -4,7 +4,7 @@
       <cluster-l align="center" justify="space-between">
         <h2><%= it.taskLane.name %></h2>
 
-        <%~ include('new-task.html', { ...it, lane: it.taskLane.name }) %>
+        <%~ include('new-task.html', { ...it, slug: it.taskLane.slug }) %>
       </cluster-l>
     </box-l>
 
