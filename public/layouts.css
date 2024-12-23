@@ -265,3 +265,16 @@ details.dropdown {
     }
   }
 }
+
+.task-lane .task:last-child {
+  margin-block-end: var(--s-m);
+}
+
+.task-lane .task:first-child {
+  margin-block-start: var(--s-m);
+}
+
+.task-lane .lane-header {
+  border-block-end: 1px solid;
+  padding-block-end: var(--s-s);
+}
