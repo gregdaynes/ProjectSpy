@@ -24,8 +24,10 @@ export default fp(
         fastify.log.debug({ path }, 'File added')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
-        const task = await TaskFactory(path, dir)
-        taskList.get(lane).set(filename, task)
+        if (lanes.includes(lane)) {
+          const task = await TaskFactory(path, dir)
+          taskList.get(lane).set(filename, task)
+        }
 
         fastify.eventBus().emit(`task:change:${lane}:${filename}`)
       })
@@ -34,8 +36,10 @@ export default fp(
         fastify.log.debug({ path }, 'File changed')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
-        const task = await TaskFactory(path, dir)
-        taskList.get(lane).set(filename, task)
+        if (lanes.includes(lane)) {
+          const task = await TaskFactory(path, dir)
+          taskList.get(lane).set(filename, task)
+        }
 
         fastify.eventBus().emit(`task:change:${lane}:${filename}`)
       })
@@ -44,7 +48,9 @@ export default fp(
         fastify.log.debug({ path }, 'File unlinked')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
-        taskList.get(lane).delete(filename)
+        if (lanes.includes(lane)) {
+          taskList.get(lane).delete(filename)
+        }
 
         fastify.eventBus().emit(`task:delete:${lane}:${filename}`)
       })

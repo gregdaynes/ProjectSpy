@@ -18,7 +18,7 @@ export default fp(
         await fs.mkdir(path, { recursive: true })
       }
 
-      for (const lane of fastify.config.lanes) {
+      for (const lane of [...fastify.config.lanes, ['_archive', 'Archive']]) {
         const lanePath = join(path, lane[0])
 
         const laneExists = await pathExists(lanePath)

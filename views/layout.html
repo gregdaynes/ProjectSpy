@@ -45,8 +45,12 @@
     <%~ include('dialog.html', it) %>
     <% } %>
 
-    <% if (it.confirmDialog) { %>
-    <%~ include('confirm-dialog.html', it) %>
+    <% if (it.confirmDeleteDialog) { %>
+    <%~ include('confirm-delete-dialog.html', it) %>
+    <% } %>
+
+    <% if (it.confirmArchiveDialog) { %>
+    <%~ include('confirm-archive-dialog.html', it) %>
     <% } %>
 	</body>
 </html>

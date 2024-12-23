@@ -5,3 +5,8 @@ When a ticket is completed, it's moved to done. Overtime, we probably don't want
 
 1. use timestamp filtering - don't show tickets older than a configured period of time.
 2. Move the ticket into a folder not tracked by the application.
+
+
+---
+
+2024-12-23 06:10	Moved task to done

@@ -1,12 +1,15 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
+
 /**
  *
  * @param fastify
  */
 export default async function (fastify) {
-  fastify.get('/delete/:lane/:filename', {
+  fastify.get('/archive/:lane/:filename', {
     schema: {
       params: {
-        $id: 'app:delete:params',
+        $id: 'app:archive:params',
         type: 'object',
         properties: {
           lane: {
@@ -31,7 +34,7 @@ export default async function (fastify) {
       ...reply.locals,
       lanes: request.server.config.lanes,
       page: {
-        title: 'Delete Task',
+        title: 'Archive Task',
       },
       task: {
         ...builtTask,
@@ -40,16 +43,16 @@ export default async function (fastify) {
         lane,
         filePath: task.relativePath,
       },
-      confirmDeleteDialog: true,
+      confirmArchiveDialog: true,
     }
 
     return reply.view('view', data)
   })
 
-  fastify.post('/delete/:lane/:filename', {
+  fastify.post('/archive/:lane/:filename', {
     schema: {
       params: {
-        $id: 'app:delete:params:post',
+        $id: 'app:archive:params:post',
         type: 'object',
         properties: {
           lane: {
@@ -72,6 +75,18 @@ export default async function (fastify) {
     if (!exists) {
       return reply.redirect('/')
     }
+
+    let fileContent = await readFile(filePath, { encoding: 'utf-8' })
+    const updatedFilePath = join(request.server.config.dirPath, '_archive', filename)
+
+    fileContent = request.logToTask(fileContent, 'Archived task')
+
+    await request.server.changeFile({
+      lane: '_archive',
+      filename,
+      filePath: updatedFilePath,
+      contents: fileContent
+    })
 
     await request.server.deleteFile({ filename, lane, filePath })
 

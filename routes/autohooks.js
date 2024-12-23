@@ -64,7 +64,6 @@ export default function (fastify, opts) {
   fastify.decorate('changeFile', async ({ lane, filePath, filename, contents }) => {
     const { promise, resolve, reject } = Promise.withResolvers()
 
-
     fastify.eventBus().on(`task:change:${lane}:${filename}`, () => {
       resolve()
     })

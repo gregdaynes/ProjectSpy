@@ -1,0 +1,32 @@
+<dialog open class="confirm">
+  <cover-l centered="[primary-element]" minHeight="100%" noPad=true space=0>
+    <header>
+      <box-l padding="var(--s-xs)" borderWidth=1>
+        <grid-with-sidebars-l>
+          <h3>Confirm</h3>
+
+          <form method="get" action="/">
+            <button type="submit">
+              <span>Close</span>
+            </button>
+          </form>
+        </grid-with-sidebars-l>
+      </box-l>
+    </header>
+
+    <box-l primary-element>
+      <p>Do you really want to archive <i><%= it.task.title %><i></p>
+    </box-l>
+
+    <footer>
+      <box-l padding="var(--s-xs)" borderWidth=1>
+        <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
+          <cluster-l align=center justify=end>
+          <button type="submit" formmethod="get" formaction="/view/<%= it.task.filePath %>">Cancel</button>
+          <button type="submit" formaction="/archive/<%= it.task.filePath %>">Archive</button>
+          </cluster-l>
+        </form>
+      </box-l>
+    </footer>
+  </cover-l>
+</dialog>
