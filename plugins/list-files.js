@@ -34,6 +34,8 @@ export default fp(
 
         const task = await TaskFactory(path, dir)
         taskList.get(lane).set(filename, task)
+
+        fastify.eventBus().emit(`task:change:${lane}:${filename}`)
       })
 
       watcher.on('unlink', function (path) {

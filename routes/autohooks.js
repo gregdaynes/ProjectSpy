@@ -1,6 +1,11 @@
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
 
+/**
+ *
+ * @param fastify
+ * @param opts
+ */
 export default function (fastify, opts) {
   fastify.decorate('preHandlerParams', async (request, reply) => {
     const { lane, filename } = request.params
@@ -60,10 +65,24 @@ export default function (fastify, opts) {
     const { promise, resolve, reject } = Promise.withResolvers()
 
     fastify.eventBus().on(`task:add:${lane}:${filename}`, () => {
+      fastify.log.debug({ lane, filePath, filename }, `writeFile triggered task:add:${lane}:${filename}`)
       resolve()
     })
 
-    await fs.writeFile(filePath, contents)
+    fs.writeFile(filePath, contents)
+
+    return promise
+  })
+
+  fastify.decorate('changeFile', async ({ lane, filePath, filename, contents }) => {
+    const { promise, resolve, reject } = Promise.withResolvers()
+
+
+    fastify.eventBus().on(`task:change:${lane}:${filename}`, () => {
+      resolve()
+    })
+
+    fs.writeFile(filePath, contents)
 
     return promise
   })
@@ -85,6 +104,10 @@ export default function (fastify, opts) {
   })
 }
 
+/**
+ *
+ * @param task
+ */
 function buildTask (task) {
   return {
     relativePath: task.relativePath,
