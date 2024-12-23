@@ -40,10 +40,14 @@ export default function (fastify, opts) {
     reply.locals.taskLanes = []
 
     for (const [slug, name] of request.config.lanes) {
+      const tasks = [...request.taskList().get(slug)]
+        .map(task => request.buildTask(task[1]))
+        .sort((a, b) => b.priority - a.priority)
+
       const lane = {
         name,
         slug,
-        tasks: [...request.taskList().get(slug)].map(task => request.buildTask(task[1]))
+        tasks,
       }
 
       reply.locals.taskLanes.push(lane)
