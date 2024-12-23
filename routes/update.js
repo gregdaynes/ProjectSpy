@@ -40,28 +40,30 @@ export default async function (fastify) {
     ]
   }, async (request, reply) => {
     const { lane: currentLane, filename, filePath } = request.ctx
-    const { lane: updatedLane, content: updatedContent } = request.body
+    let { lane: updatedLane, content: updatedContent } = request.body
 
     const fileContent = await readFile(filePath, { encoding: 'utf-8' })
-
     let updatedFilePath = filePath
-    const hasUpdatedContent = fileContent !== updatedContent
-    const hasUpdatedPath = currentLane !== updatedLane
+
+    const hasUpdatedContent = fileContent.trim() != updatedContent.trim()
+    if (hasUpdatedContent) {
+      updatedContent = request.logToTask(updatedContent, 'Updated task')
+    }
 
     // move the file if the lane has changed
+    const hasUpdatedPath = currentLane != updatedLane
     if (hasUpdatedPath) {
       updatedFilePath = join(request.server.config.dirPath, updatedLane, filename)
+      updatedContent = request.logToTask(updatedContent, `Moved task to ${updatedLane}`)
     }
 
     // Write file changes including new file if moved
-    if (hasUpdatedContent || hasUpdatedPath) {
-      await request.server.changeFile({
-        lane: updatedLane,
-        filename,
-        filePath: updatedFilePath,
-        contents: updatedContent
-      })
-    }
+    await request.server.changeFile({
+      lane: updatedLane,
+      filename,
+      filePath: updatedFilePath,
+      contents: updatedContent
+    })
 
     // delete the old file
     if (hasUpdatedPath) {

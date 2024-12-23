@@ -27,7 +27,8 @@ export default async function (fastify) {
       }
     }
   }, async (request, reply) => {
-    const { lane, content, name } = request.body
+    const { lane, name } = request.body
+    let content = request.body.content
 
     const filename = slugify(name, { strict: true, lower: true }) + '.md'
 
@@ -35,10 +36,12 @@ export default async function (fastify) {
 
     const { promise, resolve, reject } = Promise.withResolvers()
 
-    request.eventBus.on(`task:add:${lane}:${filename}`, () => {
+    request.eventBus.on(`task:change:${lane}:${filename}`, () => {
       reply.redirect(`/view/${lane}/${filename}`)
       resolve()
     })
+
+    content = request.logToTask(content, 'Created task')
 
     await writeFile(filePath, content)
 

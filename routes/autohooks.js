@@ -61,19 +61,6 @@ export default function (fastify, opts) {
     return promise
   })
 
-  fastify.decorate('writeFile', async ({ lane, filePath, filename, contents }) => {
-    const { promise, resolve, reject } = Promise.withResolvers()
-
-    fastify.eventBus().on(`task:add:${lane}:${filename}`, () => {
-      fastify.log.debug({ lane, filePath, filename }, `writeFile triggered task:add:${lane}:${filename}`)
-      resolve()
-    })
-
-    fs.writeFile(filePath, contents)
-
-    return promise
-  })
-
   fastify.decorate('changeFile', async ({ lane, filePath, filename, contents }) => {
     const { promise, resolve, reject } = Promise.withResolvers()
 
@@ -102,6 +89,10 @@ export default function (fastify, opts) {
   fastify.addHook('onRequest', async (request, reply) => {
     request.eventBus = request.server.eventBus()
   })
+
+  fastify.addHook('onRequest', async (request, reply) => {
+    request.logToTask = logToTask
+  })
 }
 
 /**
@@ -120,4 +111,20 @@ function buildTask (task) {
       view: `/view/${task.relativePath}`,
     },
   }
+}
+
+function logToTask (fileContents, message) {
+  const logMessageMatcher = /^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}/
+
+  const hasLog = fileContents.trim()
+    .split('\n')
+    .at(-1)
+    .match(logMessageMatcher)
+
+  if (!hasLog) {
+    fileContents += `\n\n---\n\n`
+  }
+
+  fileContents += `${new Date().toISOString().replace('T', ' ').slice(0, 16)}\t${message}\n`
+  return fileContents
 }

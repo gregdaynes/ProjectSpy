@@ -21,15 +21,17 @@ export default fp(
       })
 
       watcher.on('add', async function (path) {
+        fastify.log.debug({ path }, 'File added')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
         const task = await TaskFactory(path, dir)
         taskList.get(lane).set(filename, task)
 
-        fastify.eventBus().emit(`task:add:${lane}:${filename}`)
+        fastify.eventBus().emit(`task:change:${lane}:${filename}`)
       })
 
       watcher.on('change', async function (path) {
+        fastify.log.debug({ path }, 'File changed')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
         const task = await TaskFactory(path, dir)
@@ -39,6 +41,7 @@ export default fp(
       })
 
       watcher.on('unlink', function (path) {
+        fastify.log.debug({ path }, 'File unlinked')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
         taskList.get(lane).delete(filename)
