@@ -26,7 +26,7 @@ const { positionals, } = parseArgs({
   },
   strict: true,
   allowPositionals: true
-});
+})
 
 const cmd = positionals[0]
 const config = {

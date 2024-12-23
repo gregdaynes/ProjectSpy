@@ -1,0 +1,1 @@
+remove lane from file name at the top of dialogs

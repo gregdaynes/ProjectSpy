@@ -1,3 +1,7 @@
+/**
+ *
+ * @param fastify
+ */
 export default async function (fastify) {
   fastify.get('/view/:lane/:filename', {
     schema: {
@@ -42,6 +46,7 @@ export default async function (fastify) {
           update: `/update/${lane}/${filename}`
         }
       },
+      viewDialog: true
     }
 
     return reply.view('view', data)

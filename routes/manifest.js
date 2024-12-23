@@ -1,3 +1,8 @@
+/**
+ *
+ * @param fastify
+ * @param _opts
+ */
 export default async function root (fastify, _opts) {
   fastify.get('/manifest.json', function manifestHandler (request, reply) {
     reply.header(

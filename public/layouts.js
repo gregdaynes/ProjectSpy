@@ -1,3 +1,5 @@
+/* global HTMLElement, customElements, ResizeObserver, MutationObserver */
+
 /**
  * @module box-l
  * @description
@@ -7,20 +9,20 @@
  * @property {boolean} invert=false Whether to apply an inverted theme. Only recommended for greyscale designs.
  */
 export class Box extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Box-${[this.padding, this.borderWidth, this.invert].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Box-${[this.padding, this.borderWidth, this.invert].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             padding: ${this.padding};
             border: ${this.borderWidth} solid;
-            ${this.invert ?
-            `background-color: var(--color-light);
+            ${this.invert
+            ? `background-color: var(--color-light);
               filter: invert(100%);`
             : ''}
           }
@@ -28,287 +30,288 @@ export class Box extends HTMLElement {
           [data-i="${this.i}"] {
             background-color: inherit;
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get padding() {
-    return this.getAttribute('padding') || 'var(--s-m)';
+  get padding () {
+    return this.getAttribute('padding') || 'var(--s-m)'
   }
 
-  set padding(val) {
-    return this.setAttribute('padding', val);
+  set padding (val) {
+    return this.setAttribute('padding', val)
   }
 
-  get borderWidth() {
-    return this.getAttribute('borderWidth') || 'var(--border-thin)';
+  get borderWidth () {
+    return this.getAttribute('borderWidth') || 'var(--border-thin)'
   }
 
-  set borderWidth(val) {
-    return this.setAttribute('borderWidth', val);
+  set borderWidth (val) {
+    return this.setAttribute('borderWidth', val)
   }
 
-  static get observedAttributes() {
-    return ['borderWidth', 'padding', 'invert'];
+  static get observedAttributes () {
+    return ['borderWidth', 'padding', 'invert']
   }
 
-  get invert() {
-    return this.hasAttribute('invert');
+  get invert () {
+    return this.hasAttribute('invert')
   }
 
-  set invert(val) {
+  set invert (val) {
     if (val) {
-      return this.setAttribute('invert', '');
+      return this.setAttribute('invert', '')
     } else {
-      return this.removeAttribute('invert');
+      return this.removeAttribute('invert')
     }
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('box-l', Box);
+  customElements.define('box-l', Box)
 }/**
- * @module center-l
- * @description
- * A custom element for centering a block-level element horizontally,
- * with a max-width value representing the typographic measure
- * @property {string} max=var(--measure) A CSS `max-width` value
- * @property {boolean} andText=false Center align the text too (`text-align: center`)
- * @property {boolean} gutters=0 The minimum space on either side of the content
- * @property {boolean} intrinsic=false Center child elements based on their content width
- */
+  * @module center-l
+  * @description
+  * A custom element for centering a block-level element horizontally,
+  * with a max-width value representing the typographic measure
+  * @property {string} max=var(--measure) A CSS `max-width` value
+  * @property {boolean} andText=false Center align the text too (`text-align: center`)
+  * @property {boolean} gutters=0 The minimum space on either side of the content
+  * @property {boolean} intrinsic=false Center child elements based on their content width
+  */
 export class Center extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Center-${[this.max, this.andText, this.gutters, this.intrinsic].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Center-${[this.max, this.andText, this.gutters, this.intrinsic].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             max-width: ${this.max};
-            ${this.gutters ? `
+            ${this.gutters
+? `
             padding-inline-start: ${this.gutters};
             padding-inline-end: ${this.gutters};`
             : ''}
-            ${this.andText ? `text-align: center;` : ''}
-            ${this.intrinsic ? `
+            ${this.andText ? 'text-align: center;' : ''}
+            ${this.intrinsic
+? `
             display: flex;
             flex-direction: column;
             align-items: center;`
             : ''}
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get max() {
-    return this.getAttribute('max') || 'var(--measure)';
+  get max () {
+    return this.getAttribute('max') || 'var(--measure)'
   }
 
-  set max(val) {
-    return this.setAttribute('max', val);
+  set max (val) {
+    return this.setAttribute('max', val)
   }
 
-  get andText() {
-    return this.hasAttribute('andText');
+  get andText () {
+    return this.hasAttribute('andText')
   }
 
-  set andText(val) {
+  set andText (val) {
     if (val) {
-      return this.setAttribute('andText', '');
+      return this.setAttribute('andText', '')
     } else {
-      return this.removeAttribute('andText');
+      return this.removeAttribute('andText')
     }
   }
 
-  get gutters() {
-    return this.getAttribute('gutters') || null;
+  get gutters () {
+    return this.getAttribute('gutters') || null
   }
 
-  set gutters(val) {
-    return this.setAttribute('gutters', val);
+  set gutters (val) {
+    return this.setAttribute('gutters', val)
   }
 
-  get intrinsic() {
-    return this.hasAttribute('intrinsic');
+  get intrinsic () {
+    return this.hasAttribute('intrinsic')
   }
 
-  set intrinsic(val) {
+  set intrinsic (val) {
     if (val) {
-      return this.setAttribute('intrinsic', '');
+      return this.setAttribute('intrinsic', '')
     } else {
-      return this.removeAttribute('intrinsic');
+      return this.removeAttribute('intrinsic')
     }
   }
 
-  static get observedAttributes() {
-    return ['max', 'andText', 'gutters', 'intrinsic'];
+  static get observedAttributes () {
+    return ['max', 'andText', 'gutters', 'intrinsic']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-
-  customElements.define('center-l', Center);
+  customElements.define('center-l', Center)
 }/**
- * @module cluster-l
- * @description
- * A custom element for grouping items, with control over the margin between them
- * @property {string} justify=flex-start A CSS `justify-content` value
- * @property {string} align=flex-start A CSS `align-items` value
- * @property {string} space=var(--s-m) A CSS `gap` value. The minimum space between the clustered child elements.
- */
+  * @module cluster-l
+  * @description
+  * A custom element for grouping items, with control over the margin between them
+  * @property {string} justify=flex-start A CSS `justify-content` value
+  * @property {string} align=flex-start A CSS `align-items` value
+  * @property {string} space=var(--s-m) A CSS `gap` value. The minimum space between the clustered child elements.
+  */
 export class Cluster extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Cluster-${[this.justify, this.align, this.space].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Cluster-${[this.justify, this.align, this.space].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             justify-content: ${this.justify};
             align-items: ${this.align};
             gap: ${this.space};
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get justify() {
-    return this.getAttribute('justify') || 'flex-start';
+  get justify () {
+    return this.getAttribute('justify') || 'flex-start'
   }
 
-  set justify(val) {
-    return this.setAttribute('justify', val);
+  set justify (val) {
+    return this.setAttribute('justify', val)
   }
 
-  get align() {
-    return this.getAttribute('align') || 'flex-start';
+  get align () {
+    return this.getAttribute('align') || 'flex-start'
   }
 
-  set align(val) {
-    return this.setAttribute('align', val);
+  set align (val) {
+    return this.setAttribute('align', val)
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s-m)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s-m)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  static get observedAttributes() {
-    return ['justify', 'align', 'space'];
+  static get observedAttributes () {
+    return ['justify', 'align', 'space']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('cluster-l', Cluster);
+  customElements.define('cluster-l', Cluster)
 }/**
- * @module container-l
- * @description
- * A custom element for defining containment contexts
- * @property {string} name The name of the container, used as the CSS `container-name` value (optional)
- */
+  * @module container-l
+  * @description
+  * A custom element for defining containment contexts
+  * @property {string} name The name of the container, used as the CSS `container-name` value (optional)
+  */
 class Container extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Container-${[this.name]}`;
-      this.dataset.i = this.i;
+      this.i = `Container-${[this.name]}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
             [data-i="${this.i}"] {
               display: block;
               container-type: inline-size;
               ${this.name ? `container-name: ${this.name};` : ''}
             }
-          `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+          `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get name() {
-    return this.getAttribute('name') || null;
+  get name () {
+    return this.getAttribute('name') || null
   }
 
-  set name(val) {
-    return this.setAttribute('name', val);
+  set name (val) {
+    return this.setAttribute('name', val)
   }
 
-  static get observedAttributes() {
-    return ['name'];
+  static get observedAttributes () {
+    return ['name']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('container-l', Container);
+  customElements.define('container-l', Container)
 }/**
- * @module cover-l
- * @description
- * A custom element for covering a block-level element horizontally,
- * with a max-width value representing the typographic measure
- * @property {string} centered=h1 A simple selector such an element or class selector, representing the centered (main) element in the cover
- * @property {string} space=var(--s-m) The minimum space between and around all of the child elements
- * @property {string} minHeight=100vh The minimum height (block-size) for the **Cover**
- * @property {boolean} noPad=false Whether the spacing is also applied as padding to the container element
- */
+  * @module cover-l
+  * @description
+  * A custom element for covering a block-level element horizontally,
+  * with a max-width value representing the typographic measure
+  * @property {string} centered=h1 A simple selector such an element or class selector, representing the centered (main) element in the cover
+  * @property {string} space=var(--s-m) The minimum space between and around all of the child elements
+  * @property {string} minHeight=100vh The minimum height (block-size) for the **Cover**
+  * @property {boolean} noPad=false Whether the spacing is also applied as padding to the container element
+  */
 export class Cover extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Cover-${[this.centered, this.space, this.minHeight, this.noPad].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Cover-${[this.centered, this.space, this.minHeight, this.noPad].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             min-height: ${this.minHeight};
@@ -330,131 +333,131 @@ export class Cover extends HTMLElement {
           [data-i="${this.i}"] > ${this.centered} {
             margin-block: auto;
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get centered() {
-    return this.getAttribute('centered') || 'h1';
+  get centered () {
+    return this.getAttribute('centered') || 'h1'
   }
 
-  set centered(val) {
-    return this.setAttribute('centered', val);
+  set centered (val) {
+    return this.setAttribute('centered', val)
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s-m)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s-m)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  get minHeight() {
-    return this.getAttribute('minHeight') || '100vh';
+  get minHeight () {
+    return this.getAttribute('minHeight') || '100vh'
   }
 
-  set minHeight(val) {
-    return this.setAttribute('minHeight', val);
+  set minHeight (val) {
+    return this.setAttribute('minHeight', val)
   }
 
-  get noPad() {
-    return this.hasAttribute('noPad');
+  get noPad () {
+    return this.hasAttribute('noPad')
   }
 
-  set noPad(val) {
+  set noPad (val) {
     if (val) {
-      return this.setAttribute('noPad', '');
+      return this.setAttribute('noPad', '')
     } else {
-      return this.removeAttribute('noPad');
+      return this.removeAttribute('noPad')
     }
   }
 
-  static get observedAttributes() {
-    return ['centered', 'space', 'minHeight', 'noPad'];
+  static get observedAttributes () {
+    return ['centered', 'space', 'minHeight', 'noPad']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('cover-l', Cover);
+  customElements.define('cover-l', Cover)
 }/**
- * @module frame-l
- * @description
- * A custom element for augmenting image ratios
- * @property {string} ratio=16:9 The element's aspect ratio
- */
+  * @module frame-l
+  * @description
+  * A custom element for augmenting image ratios
+  * @property {string} ratio=16:9 The element's aspect ratio
+  */
 export class Frame extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
       if (this.children.length !== 1) {
-        console.warn('<frame-l> elements should have just one child element');
+        console.warn('<frame-l> elements should have just one child element')
       }
-      this.i = `Frame-${[this.ratio].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Frame-${[this.ratio].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let ratio = this.ratio.split(':');
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const ratio = this.ratio.split(':')
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             aspect-ratio: ${ratio[0]} / ${ratio[1]};
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get ratio() {
-    return this.getAttribute('ratio') || '16:9';
+  get ratio () {
+    return this.getAttribute('ratio') || '16:9'
   }
 
-  set ratio(val) {
-    return this.setAttribute('ratio', val);
+  set ratio (val) {
+    return this.setAttribute('ratio', val)
   }
 
-  static get observedAttributes() {
-    return ['ratio'];
+  static get observedAttributes () {
+    return ['ratio']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('frame-l', Frame);
+  customElements.define('frame-l', Frame)
 }/**
- * @module grid-l
- * @description
- * A custom element for creating a responsive grid using the CSS Grid module
- * @property {string} min=250px A CSS length value representing x in `minmax(min(x, 100%), 1fr)`
- * @property {string} space=var(--s-m) The space between grid cells
- */
+  * @module grid-l
+  * @description
+  * A custom element for creating a responsive grid using the CSS Grid module
+  * @property {string} min=250px A CSS length value representing x in `minmax(min(x, 100%), 1fr)`
+  * @property {string} space=var(--s-m) The space between grid cells
+  */
 export class Grid extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Grid-${[this.min, this.space].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Grid-${[this.min, this.space].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             grid-gap: ${this.space};
@@ -465,64 +468,64 @@ export class Grid extends HTMLElement {
               grid-template-columns: repeat(auto-fill, minmax(min(${this.min}, 100%), 1fr));
             }
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get min() {
-    return this.getAttribute('min') || '250px';
+  get min () {
+    return this.getAttribute('min') || '250px'
   }
 
-  set min(val) {
-    return this.setAttribute('min', val);
+  set min (val) {
+    return this.setAttribute('min', val)
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s-m)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s-m)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  static get observedAttributes() {
-    return ['min', 'space'];
+  static get observedAttributes () {
+    return ['min', 'space']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('grid-l', Grid);
+  customElements.define('grid-l', Grid)
 }/**
- * @module icon-l
- * @description
- * A custom element for inline icon insertion
- * @property {string} space=null The space between the text and the icon. If null, natural word spacing is preserved
- * @property {string} label=null Turns the element into an image in assistive technologies and adds an aria-label of the value
- */
+  * @module icon-l
+  * @description
+  * A custom element for inline icon insertion
+  * @property {string} space=null The space between the text and the icon. If null, natural word spacing is preserved
+  * @property {string} label=null Turns the element into an image in assistive technologies and adds an aria-label of the value
+  */
 export class Icon extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
       if (this.label) {
-        this.setAttribute('role', 'img');
+        this.setAttribute('role', 'img')
         this.setAttribute('aria-label', this.label)
       }
       if (this.space) {
-        this.i = `Icon-${this.space}`;
-        this.dataset.i = this.i;
+        this.i = `Icon-${this.space}`
+        this.dataset.i = this.i
         if (!document.getElementById(this.i)) {
-          let styleEl = document.createElement('style');
-          styleEl.id = this.i;
+          const styleEl = document.createElement('style')
+          styleEl.id = this.i
           styleEl.innerHTML = `
             [data-i="${this.i}"] {
               display: inline-flex;
@@ -532,144 +535,146 @@ export class Icon extends HTMLElement {
             [data-i="${this.i}"] > svg {
               margin-inline-end: ${this.space};
             }
-          `.replace(/\s\s+/g, ' ').trim();
-          document.head.appendChild(styleEl);
+          `.replace(/\s\s+/g, ' ').trim()
+          document.head.appendChild(styleEl)
         }
       }
     }
   }
 
-  get space() {
-    return this.getAttribute('space') || null;
+  get space () {
+    return this.getAttribute('space') || null
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  get label() {
-    return this.getAttribute('label') || null;
+  get label () {
+    return this.getAttribute('label') || null
   }
 
-  set label(val) {
-    return this.setAttribute('label', val);
+  set label (val) {
+    return this.setAttribute('label', val)
   }
 
-  static get observedAttributes() {
-    return ['space', 'label'];
+  static get observedAttributes () {
+    return ['space', 'label']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('icon-l', Icon);
+  customElements.define('icon-l', Icon)
 }/**
- * @module imposter-l
- * @description
- * A custom element to be positioned absolutely over any element
- * @property {boolean} breakout=false Whether the element is allowed to break out of the container over which it is positioned
- * @property {string} margin=0 The minimum space between the element and the inside edges of the positioning container over which it is placed (where `breakout` is not applied)
+  * @module imposter-l
+  * @description
+  * A custom element to be positioned absolutely over any element
+  * @property {boolean} breakout=false Whether the element is allowed to break out of the container over which it is positioned
+  * @property {string} margin=0 The minimum space between the element and the inside edges of the positioning container over which it is placed (where `breakout` is not applied)
   * @property {boolean} fixed=false Whether to position the element relative to the viewport
- */
+  */
 export class Imposter extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Imposter-${[this.breakout, this.fixed, this.margin].join('')}`;
-      this.dataset.i = this.i;
-      let margin = this.margin === '0' ? '0px' : this.margin;
+      this.i = `Imposter-${[this.breakout, this.fixed, this.margin].join('')}`
+      this.dataset.i = this.i
+      const margin = this.margin === '0' ? '0px' : this.margin
       if (!document.getElementById(this.i) && (!this.breakout || this.fixed)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
-            ${!this.breakout ? `
+            ${!this.breakout
+? `
               max-inline-size: calc(100% - (${margin} * 2));
               max-block-size: calc(100% - (${margin} * 2));
               overflow: auto;`
             : ''}
-            ${this.fixed ? `
+            ${this.fixed
+? `
               position: fixed;`
             : ''}
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get breakout() {
-    return this.hasAttribute('breakout');
+  get breakout () {
+    return this.hasAttribute('breakout')
   }
 
-  set breakout(val) {
+  set breakout (val) {
     if (val) {
-      return this.setAttribute('breakout', '');
+      return this.setAttribute('breakout', '')
     } else {
-      return this.removeAttribute('breakout');
+      return this.removeAttribute('breakout')
     }
   }
 
-  get fixed() {
-    return this.hasAttribute('fixed');
+  get fixed () {
+    return this.hasAttribute('fixed')
   }
 
-  set fixed(val) {
+  set fixed (val) {
     if (val) {
-      return this.setAttribute('fixed', '');
+      return this.setAttribute('fixed', '')
     } else {
-      return this.removeAttribute('fixed');
+      return this.removeAttribute('fixed')
     }
   }
 
-  get margin() {
-    return this.getAttribute('margin') || '0px';
+  get margin () {
+    return this.getAttribute('margin') || '0px'
   }
 
-  set margin(val) {
-    return this.setAttribute('margin', val);
+  set margin (val) {
+    return this.setAttribute('margin', val)
   }
 
-  static get observedAttributes() {
-    return ['breakout', 'margin', 'fixed'];
+  static get observedAttributes () {
+    return ['breakout', 'margin', 'fixed']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('imposter-l', Imposter);
+  customElements.define('imposter-l', Imposter)
 }/**
- * @module reel-l
- * @description
- * A custom element for creating a responsive grid using the CSS Grid module
- * @property {string} itemWidth=auto The width of each item (child element) in the Reel
- * @property {string} space=var(--s0) The space between Reel items (child elements)
- * @property {string} height=auto The height of the Reel itself
- * @property {boolean} noBar=false Whether to display the scrollbar
- */
+  * @module reel-l
+  * @description
+  * A custom element for creating a responsive grid using the CSS Grid module
+  * @property {string} itemWidth=auto The width of each item (child element) in the Reel
+  * @property {string} space=var(--s0) The space between Reel items (child elements)
+  * @property {string} height=auto The height of the Reel itself
+  * @property {boolean} noBar=false Whether to display the scrollbar
+  */
 export class Reel extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Reel-${[this.itemWidth, this.height, this.space, this.noBar].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Reel-${[this.itemWidth, this.height, this.space, this.noBar].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             height: ${this.height};
@@ -690,12 +695,13 @@ export class Reel extends HTMLElement {
           }
 
           [data-i="${this.i}"].overflowing {
-            ${!this.noBar ?
-            `padding-bottom: ${this.space}`
+            ${!this.noBar
+            ? `padding-bottom: ${this.space}`
             : ''}
           }
 
-          ${this.noBar ? `
+          ${this.noBar
+? `
           [data-i="${this.i}"] {
             scrollbar-width: none;
           }
@@ -703,101 +709,102 @@ export class Reel extends HTMLElement {
           [data-i="${this.i}"]::-webkit-scrollbar {
             display: none;
           }
-          ` : ''}
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+          `
+: ''}
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  toggleOverflowClass(elem) {
-    elem.classList.toggle('overflowing', this.scrollWidth > this.clientWidth);
+  toggleOverflowClass (elem) {
+    elem.classList.toggle('overflowing', this.scrollWidth > this.clientWidth)
   }
 
-  get itemWidth() {
-    return this.getAttribute('itemWidth') || 'auto';
+  get itemWidth () {
+    return this.getAttribute('itemWidth') || 'auto'
   }
 
-  set itemWidth(val) {
-    return this.setAttribute('itemWidth', val);
+  set itemWidth (val) {
+    return this.setAttribute('itemWidth', val)
   }
 
-  get height() {
-    return this.getAttribute('height') || 'auto';
+  get height () {
+    return this.getAttribute('height') || 'auto'
   }
 
-  set height(val) {
-    return this.setAttribute('height', val);
+  set height (val) {
+    return this.setAttribute('height', val)
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s0)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s0)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  get noBar() {
-    return this.hasAttribute('noBar');
+  get noBar () {
+    return this.hasAttribute('noBar')
   }
 
-  set noBar(val) {
+  set noBar (val) {
     if (val) {
-      this.setAttribute('noBar', '');
+      this.setAttribute('noBar', '')
     } else {
-      this.removeAttribute('noBar');
+      this.removeAttribute('noBar')
     }
   }
 
-  static get observedAttributes() {
-    return ['itemWidth', 'height', 'space', 'noBar'];
+  static get observedAttributes () {
+    return ['itemWidth', 'height', 'space', 'noBar']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
     if ('ResizeObserver' in window) {
       new ResizeObserver(entries => {
-        this.toggleOverflowClass(entries[0].target);
-      }).observe(this);
+        this.toggleOverflowClass(entries[0].target)
+      }).observe(this)
     }
 
     if ('MutationObserver' in window) {
       new MutationObserver(entries => {
-        this.toggleOverflowClass(entries[0].target);
-      }).observe(this, { childList: true });
+        this.toggleOverflowClass(entries[0].target)
+      }).observe(this, { childList: true })
     }
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('reel-l', Reel);
+  customElements.define('reel-l', Reel)
 }/**
- * @module sidebar-l
- * @description
- * A custom element for placing two elements side-by-side. If space permits, the sidebar element has a set width, and the companion takes up the rest of the available horizontal space. If not, the elements are collapsed into a single column, each taking up 100% of the horizontal space.
- * @property {string} side=left Which element to treat as the sidebar (all values but "left" are considered "right")
- * @property {string} sideWidth Represents the width of the sidebar _when_ adjacent. If not set (`null`) it defaults to the sidebar's content width
- * @property {string} contentMin=50% A CSS **percentage** value. The minimum width of the content element in the horizontal configuration
- * @property {string} space=var(--s-m) A CSS margin value representing the space between the two elements
- * @property {boolean} noStretch=false Make the adjacent elements adopt their natural height
- */
+  * @module sidebar-l
+  * @description
+  * A custom element for placing two elements side-by-side. If space permits, the sidebar element has a set width, and the companion takes up the rest of the available horizontal space. If not, the elements are collapsed into a single column, each taking up 100% of the horizontal space.
+  * @property {string} side=left Which element to treat as the sidebar (all values but "left" are considered "right")
+  * @property {string} sideWidth Represents the width of the sidebar _when_ adjacent. If not set (`null`) it defaults to the sidebar's content width
+  * @property {string} contentMin=50% A CSS **percentage** value. The minimum width of the content element in the horizontal configuration
+  * @property {string} space=var(--s-m) A CSS margin value representing the space between the two elements
+  * @property {boolean} noStretch=false Make the adjacent elements adopt their natural height
+  */
 export class Sidebar extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
       if (!this.contentMin.includes('%')) {
-        console.warn('The value for each <sidebar-l> `contentMin` property should be a percentage. Otherwise overflow is likely to occur');
+        console.warn('The value for each <sidebar-l> `contentMin` property should be a percentage. Otherwise overflow is likely to occur')
       }
-      this.i = `Sidebar-${[this.side, this.sideWidth, this.contentMin, this.space].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Sidebar-${[this.side, this.sideWidth, this.contentMin, this.space].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             gap: ${this.space};
@@ -808,100 +815,101 @@ export class Sidebar extends HTMLElement {
             ${this.sideWidth ? `flex-basis: ${this.sideWidth};` : ''}
           }
 
-          [data-i="${this.i}"] > ${this.side !== 'left' ? `:first-child` : `:last-child`} {
+          [data-i="${this.i}"] > ${this.side !== 'left' ? ':first-child' : ':last-child'} {
             flex-basis: 0;
             flex-grow: 999;
             min-inline-size: ${this.contentMin};
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get side() {
-    return this.getAttribute('side') || 'left';
+  get side () {
+    return this.getAttribute('side') || 'left'
   }
 
-  set side(val) {
-    return this.setAttribute('side', val);
+  set side (val) {
+    return this.setAttribute('side', val)
   }
 
-  get sideWidth() {
-    return this.getAttribute('sideWidth') || null;
+  get sideWidth () {
+    return this.getAttribute('sideWidth') || null
   }
 
-  set sideWidth(val) {
-    return this.setAttribute('sideWidth', val);
+  set sideWidth (val) {
+    return this.setAttribute('sideWidth', val)
   }
 
-  get contentMin() {
-    return this.getAttribute('contentMin') || '50%';
+  get contentMin () {
+    return this.getAttribute('contentMin') || '50%'
   }
 
-  set contentMin(val) {
-    return this.setAttribute('contentMin', val);
+  set contentMin (val) {
+    return this.setAttribute('contentMin', val)
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s-m)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s-m)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  get noStretch() {
-    return this.hasAttribute('noStretch');
+  get noStretch () {
+    return this.hasAttribute('noStretch')
   }
 
-  set noStretch(val) {
+  set noStretch (val) {
     if (val) {
-      this.setAttribute('noStretch', '');
+      this.setAttribute('noStretch', '')
     } else {
-      this.removeAttribute('noStretch');
+      this.removeAttribute('noStretch')
     }
   }
 
-  static get observedAttributes() {
-    return ['side', 'sideWidth', 'contentMin', 'space', 'noStretch'];
+  static get observedAttributes () {
+    return ['side', 'sideWidth', 'contentMin', 'space', 'noStretch']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback(name) {
-    this.render();
+  attributeChangedCallback (name) {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('sidebar-l', Sidebar);
+  customElements.define('sidebar-l', Sidebar)
 }/**
- * @module stack-l
- * @description
- * A custom element for injecting white space (margin) between flow
- * (block) elements along a vertical axis.
- * @property {string} space=var(--s-m) A CSS `margin` value
- * @property {boolean} recursive=false Whether the spaces apply recursively (i.e. regardless of nesting level)
- * @property {number} splitAfter=null The element after which to _split_ the stack with an auto margin
- */
+  * @module stack-l
+  * @description
+  * A custom element for injecting white space (margin) between flow
+  * (block) elements along a vertical axis.
+  * @property {string} space=var(--s-m) A CSS `margin` value
+  * @property {boolean} recursive=false Whether the spaces apply recursively (i.e. regardless of nesting level)
+  * @property {number} splitAfter=null The element after which to _split_ the stack with an auto margin
+  */
 export class Stack extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Stack-${[this.space, this.recursive, this.splitAfter].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Stack-${[this.space, this.recursive, this.splitAfter].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"]${this.recursive ? '' : ' >'} * + * {
             margin-block-start: ${this.space};
           }
 
-          ${this.splitAfter ? `
+          ${this.splitAfter
+? `
             [data-i="${this.i}"]:only-child {
               block-size: 100%;
             }
@@ -910,67 +918,67 @@ export class Stack extends HTMLElement {
               margin-block-end: auto;
             }`
           : ''}
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s-m)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s-m)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  get recursive() {
-    return this.hasAttribute('recursive');
+  get recursive () {
+    return this.hasAttribute('recursive')
   }
 
-  set recursive(val) {
-    return this.setAttribute(val ? 'recursive' : '');
+  set recursive (val) {
+    return this.setAttribute(val ? 'recursive' : '')
   }
 
-  get splitAfter() {
-    return this.getAttribute('splitAfter') || null;
+  get splitAfter () {
+    return this.getAttribute('splitAfter') || null
   }
 
-  set splitAfter(val) {
-    return this.setAttribute('splitAfter', val);
+  set splitAfter (val) {
+    return this.setAttribute('splitAfter', val)
   }
 
-  static get observedAttributes() {
-    return ['space', 'recursive', 'splitAfter'];
+  static get observedAttributes () {
+    return ['space', 'recursive', 'splitAfter']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-  customElements.define('stack-l', Stack);
+  customElements.define('stack-l', Stack)
 }/**
- * @module switcher-l
- * @description Switch directly between horizontal and vertical layouts at a given (container width-based) breakpoint or 'threshold'
- * @property {string} threshold=var(--measure) A CSS `width` value (representing the 'container breakpoint')
- * @property {string} space=var(--s-m) A CSS `margin` value
- * @property {integer} limit=4 A number representing the maximum number of items permitted for a horizontal layout
- */
+  * @module switcher-l
+  * @description Switch directly between horizontal and vertical layouts at a given (container width-based) breakpoint or 'threshold'
+  * @property {string} threshold=var(--measure) A CSS `width` value (representing the 'container breakpoint')
+  * @property {string} space=var(--s-m) A CSS `margin` value
+  * @property {integer} limit=4 A number representing the maximum number of items permitted for a horizontal layout
+  */
 export class Switcher extends HTMLElement {
-  constructor() {
-    super();
+  constructor () {
+    super()
     this.render = () => {
-      this.i = `Switcher-${[this.threshold, this.space, this.limit].join('')}`;
-      this.dataset.i = this.i;
+      this.i = `Switcher-${[this.threshold, this.space, this.limit].join('')}`
+      this.dataset.i = this.i
       if (!document.getElementById(this.i)) {
-        let styleEl = document.createElement('style');
-        styleEl.id = this.i;
+        const styleEl = document.createElement('style')
+        styleEl.id = this.i
         styleEl.innerHTML = `
           [data-i="${this.i}"] {
             gap: ${this.space};
@@ -984,50 +992,49 @@ export class Switcher extends HTMLElement {
           [data-i="${this.i}"] > :nth-last-child(n+${parseInt(this.limit) + 1}) ~ * {
             flex-basis: 100%;
           }
-        `.replace(/\s\s+/g, ' ').trim();
-        document.head.appendChild(styleEl);
+        `.replace(/\s\s+/g, ' ').trim()
+        document.head.appendChild(styleEl)
       }
     }
   }
-  get threshold() {
-    return this.getAttribute('threshold') || 'var(--measure)';
+
+  get threshold () {
+    return this.getAttribute('threshold') || 'var(--measure)'
   }
 
-  set threshold(val) {
-    return this.setAttribute('threshold', val);
+  set threshold (val) {
+    return this.setAttribute('threshold', val)
   }
 
-  get space() {
-    return this.getAttribute('space') || 'var(--s-m)';
+  get space () {
+    return this.getAttribute('space') || 'var(--s-m)'
   }
 
-  set space(val) {
-    return this.setAttribute('space', val);
+  set space (val) {
+    return this.setAttribute('space', val)
   }
 
-  get limit() {
-    return this.getAttribute('limit') || '5';
+  get limit () {
+    return this.getAttribute('limit') || '5'
   }
 
-  set limit(val) {
-    return this.setAttribute('limit', val);
+  set limit (val) {
+    return this.setAttribute('limit', val)
   }
 
-  static get observedAttributes() {
-    return ['threshold', 'space', 'limit'];
+  static get observedAttributes () {
+    return ['threshold', 'space', 'limit']
   }
 
-  connectedCallback() {
-    this.render();
+  connectedCallback () {
+    this.render()
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback () {
+    this.render()
   }
 }
 
 if ('customElements' in window) {
-
-  customElements.define('switcher-l', Switcher);
+  customElements.define('switcher-l', Switcher)
 }
-

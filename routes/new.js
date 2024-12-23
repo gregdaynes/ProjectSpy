@@ -2,6 +2,10 @@ import { join } from 'node:path'
 import { writeFile } from 'node:fs/promises'
 import slugify from 'slugify'
 
+/**
+ *
+ * @param fastify
+ */
 export default async function (fastify) {
   fastify.post('/create', {
     schema: {
@@ -73,8 +77,9 @@ export default async function (fastify) {
         actions: {
           update: '/create'
         },
-        filePath: ''
-      }
+        filePath: '',
+      },
+      viewDialog: true
     }
 
     return reply.view('new', data)

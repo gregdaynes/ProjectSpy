@@ -105,6 +105,11 @@ export class Task {
   }
 }
 
+/**
+ *
+ * @param filePath
+ * @param dirPath
+ */
 export default async function TaskFactory (filePath, dirPath) {
   const [title, description] = await getHeader(filePath)
   const { birthtime: created, mtime: modified } = await stat(filePath)
@@ -122,6 +127,10 @@ export default async function TaskFactory (filePath, dirPath) {
   })
 }
 
+/**
+ *
+ * @param filePath
+ */
 async function getHeader (filePath) {
   const { promise, resolve, reject } = Promise.withResolvers()
 

@@ -9,12 +9,22 @@ const defaultEnv = {
   NODE_ENV: 'test',
 }
 
+/**
+ *
+ * @param env
+ */
 function config (env) {
   return {
     configData: env,
   }
 }
 
+/**
+ *
+ * @param t
+ * @param env
+ * @param serverOptions
+ */
 async function buildApp (t, env, serverOptions) {
   const app = await fastifyCLI.build(
     startArgs,
