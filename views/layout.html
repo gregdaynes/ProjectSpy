@@ -40,6 +40,11 @@
       <%~ it.body %>
     </stack-l>
 
+
+    <% if (it.viewDialog) { %>
+    <%~ include('dialog.html', it) %>
+    <% } %>
+
     <% if (it.confirmDialog) { %>
     <%~ include('confirm-dialog.html', it) %>
     <% } %>

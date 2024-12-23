@@ -1,6 +1,10 @@
 import { join } from 'node:path'
 import { readFile } from 'node:fs/promises'
 
+/**
+ *
+ * @param fastify
+ */
 export default async function (fastify) {
   fastify.post('/update/:lane/:filename', {
     schema: {
@@ -51,7 +55,7 @@ export default async function (fastify) {
 
     // Write file changes including new file if moved
     if (hasUpdatedContent || hasUpdatedPath) {
-      await request.server.writeFile({
+      await request.server.changeFile({
         lane: updatedLane,
         filename,
         filePath: updatedFilePath,
