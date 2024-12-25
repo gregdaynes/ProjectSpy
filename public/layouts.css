@@ -159,6 +159,7 @@ grid-with-sidebars-l, .grid-with-sidebars-l {
 dialog {
   &[open] {
     overflow: visible;
+    cursor: pointer;
   }
 
   &:not(.confirm) {
