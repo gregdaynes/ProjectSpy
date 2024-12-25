@@ -48,6 +48,7 @@ export default function (fastify, opts) {
         name,
         slug,
         tasks,
+        count: tasks.length,
       }
 
       reply.locals.taskLanes.push(lane)

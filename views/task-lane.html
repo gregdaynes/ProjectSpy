@@ -2,7 +2,7 @@
   <cover-l centered="[prime-element]" space=0 noPad style="min-width: 350px; min-height: revert;  height: 100%;">
     <box-l class="lane-header" borderWidth=0 padding=0>
       <cluster-l align="center" justify="space-between">
-        <h2><%= it.taskLane.name %></h2>
+        <h2><%= it.taskLane.name %> <% if (it.taskLane.count) { %>(<%= it.taskLane.count %>)<% } %></h2>
 
         <%~ include('new-task.html', { ...it, slug: it.taskLane.slug }) %>
       </cluster-l>
