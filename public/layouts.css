@@ -159,6 +159,11 @@ grid-with-sidebars-l, .grid-with-sidebars-l {
 dialog {
   &[open] {
     overflow: visible;
+    cursor: pointer;
+
+    * {
+      cursor: default;
+    }
   }
 
   &:not(.confirm) {
@@ -242,6 +247,7 @@ details.dropdown {
   summary:not(:has(button:hover)):hover {
     background: var(--color-hover);
   }
+
 
   &[open] {
     summary::after {
