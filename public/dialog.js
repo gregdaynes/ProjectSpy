@@ -38,5 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, '', '/')
       }
     })
+
+    const textArea = dialog.querySelector('textarea')
+    textArea.onkeydown = (e) => {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault()
+
+        const form = textArea.getAttribute('form')
+        document.querySelector(`#${form}`).submit()
+      }
+    }
   }
 })
