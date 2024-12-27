@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
 
+    dialog.onkeydown = (e) => {
+      if (e.ctrlKey && e.key === 'w') {
+        e.preventDefault()
+        dialog.close()
+      }
+    }
+
     dialog.addEventListener('close', (e) => {
       if (e.target.classList.contains('confirm')) {
         const current = window.location.href
