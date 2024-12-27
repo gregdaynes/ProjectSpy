@@ -1,3 +1,4 @@
+/* global confirm */
 document.addEventListener('DOMContentLoaded', () => {
   const dialogs = document.querySelectorAll('dialog')
 
@@ -26,14 +27,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dialog.addEventListener('mouseup', ({ target }) => {
       if (target === downTarget && target === dialog) {
-        dialog.close()
+        if (dialog.getAttribute('is-dirty')) {
+          if (confirm('There are unsaved changes, are you sure?') === true) {
+            dialog.close()
+          }
+        } else {
+          dialog.close()
+        }
       }
+
+      downTarget = null
     })
+
+    const inputs = dialog.querySelectorAll('input[type="text"], textarea, select')
+    for (const input of inputs) {
+      input.addEventListener('change', (e) => {
+        dialog.setAttribute('is-dirty', true)
+      })
+
+      input.addEventListener('keyup', (e) => {
+        if (e.key === 'Control') return
+        if (e.key === 'n') return
+
+        dialog.setAttribute('is-dirty', true)
+      })
+    }
 
     dialog.onkeydown = (e) => {
       if (e.ctrlKey && e.key === 'w') {
         e.preventDefault()
-        dialog.close()
+
+        if (dialog.getAttribute('is-dirty')) {
+          if (confirm('There are unsaved changes, are you sure?') === true) {
+            dialog.close()
+          }
+        } else {
+          dialog.close()
+        }
       }
     }
 
@@ -44,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         window.history.replaceState({}, '', '/')
       }
+
+      dialog.remove()
     })
 
     const textArea = dialog.querySelector('textarea')
@@ -61,7 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.ctrlKey && e.key === 'n') {
       e.preventDefault()
 
-      window.location.href = '/new'
+      const hasDirtyForm = document.querySelectorAll('[is-dirty="true"]')
+      console.log(hasDirtyForm)
+
+      if (hasDirtyForm.length) {
+        if (confirm('There are unsaved changes, are you sure?') === true) {
+          window.location.href = '/new'
+        }
+      } else {
+        window.location.href = '/new'
+      }
     }
   }
 })
