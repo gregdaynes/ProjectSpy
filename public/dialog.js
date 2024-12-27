@@ -112,4 +112,47 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  document.onkeydown = (e) => {
+    if (e.ctrlKey && e.key === 'f') {
+      e.preventDefault()
+
+      document.getElementById('filter-input').focus()
+    }
+  }
+
+  document.getElementById('filter-button').addEventListener('click', (e) => {
+    document.getElementById('filter-input').focus()
+  })
+
+  let data = document.getElementById('search-data')
+  if (data) {
+    data = JSON.parse(data.textContent)
+  }
+
+  const filterField = document.getElementById('filter-input')
+  if (filterField) {
+    const tasks = document.querySelectorAll('.task')
+
+    filterField.addEventListener('keyup', (e) => {
+      if (e.target.value === '') {
+        tasks.forEach(task => task.classList.remove('hidden'))
+        return
+      }
+
+      const results = data.filter(([entry, id]) => {
+        return entry.includes(e.target.value)
+      }).map(([entry, id]) => id)
+
+      for (const task of tasks) {
+        const id = task.getAttribute('id')
+
+        if (!results.includes(id)) {
+          task.classList.add('hidden')
+        } else {
+          task.classList.remove('hidden')
+        }
+      }
+    })
+  }
 })

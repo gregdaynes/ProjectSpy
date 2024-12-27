@@ -154,6 +154,14 @@ grid-with-sidebars-l, .grid-with-sidebars-l {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--s-s);
+
+  > :first-child {
+    place-self: start;
+  }
+
+  > :last-child {
+    place-self: end;
+  }
 }
 
 dialog {
@@ -283,4 +291,17 @@ details.dropdown {
 .task-lane .lane-header {
   border-block-end: 1px solid;
   padding-block-end: var(--s-s);
+}
+
+.hidden {
+  display: none;
+}
+
+#filter-input {
+  &:not(:focus):placeholder-shown {
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+  }
 }

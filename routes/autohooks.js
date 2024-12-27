@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
+import slugify from 'slugify'
 
 /**
  *
@@ -52,6 +53,7 @@ export default function (fastify, opts) {
       }
 
       reply.locals.taskLanes.push(lane)
+      reply.locals.searchObject = JSON.stringify(buildSearchObject(request.taskList()), null, 2)
     }
   })
 
@@ -105,9 +107,11 @@ export default function (fastify, opts) {
  * @param task
  */
 function buildTask (task) {
+
   return {
     relativePath: task.relativePath,
 
+    id: `${task.lane}-${task.filename}`,
     title: task.title,
     descriptionHTML: task.descriptionHTML,
     tags: task.tags || [],
@@ -132,4 +136,22 @@ function logToTask (fileContents, message) {
 
   fileContents += `${new Date().toISOString().replace('T', ' ').slice(0, 16)}\t${message}\n`
   return fileContents
+}
+
+function buildSearchObject(taskList) {
+  const searchObject = []
+
+
+  for (const [lane, tasks] of taskList) {
+    for (const [filename, task] of tasks) {
+      const text = `${task.title} ${task.description}`.toLowerCase()
+
+      searchObject.push([
+        text,
+        slugify(`${lane}-${filename}`)
+      ])
+    }
+  }
+
+  return searchObject
 }
