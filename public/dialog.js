@@ -70,7 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dialog.addEventListener('close', (e) => {
       if (e.target.classList.contains('confirm')) {
         const current = window.location.href
-        window.history.replaceState({}, '', current.replace('/delete/', '/view/'))
+
+        if (current.includes('delete')) {
+          window.history.replaceState({}, '', current.replace('/delete/', '/view/'))
+        }
+
+        if (current.includes('archive')) {
+          window.history.replaceState({}, '', current.replace('/archive/', '/view/'))
+        }
       } else {
         window.history.replaceState({}, '', '/')
       }
