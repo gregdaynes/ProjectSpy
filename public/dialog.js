@@ -49,4 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  document.onkeydown = (e) => {
+    if (e.ctrlKey && e.key === 'n') {
+      e.preventDefault()
+
+      window.location.href = '/new'
+    }
+  }
 })
