@@ -1,6 +1,10 @@
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
 import slugify from 'slugify'
+import { promisify } from 'node:util'
+import ChildProcess from 'node:child_process'
+
+const exec = promisify(ChildProcess.exec)
 
 /**
  *
@@ -72,13 +76,37 @@ export default function (fastify, opts) {
   fastify.decorate('changeFile', async ({ lane, filePath, filename, contents }) => {
     const { promise, resolve, reject } = Promise.withResolvers()
 
-    fastify.eventBus().on(`task:change:${lane}:${filename}`, () => {
+    fastify.eventBus().on(`task:change:${lane}:${filename}`, async () => {
       resolve()
     })
 
     fs.writeFile(filePath, contents)
 
     return promise
+  })
+
+  fastify.decorate('commit', async (paths, message) => {
+    if (!Array.isArray(paths)) paths = [paths]
+
+    for (const path of paths) {
+      try {
+        await exec(`git add ${path}`)
+      } catch (err) {
+        if (err.stderr !== '') {
+          fastify.log.error({ err, path, message }, 'add  file')
+          throw new Error(err)
+        }
+      }
+    }
+
+    try {
+      await exec(`git commit -m "project: ${message}"`)
+    } catch (err) {
+      if (err.stderr !== '') {
+        fastify.log.error({ err, paths, message }, 'Commit file')
+        throw new Error(err)
+      }
+    }
   })
 
   fastify.addHook('onRequest', async (request, reply) => {
@@ -99,6 +127,10 @@ export default function (fastify, opts) {
 
   fastify.addHook('onRequest', async (request, reply) => {
     request.logToTask = logToTask
+  })
+
+  fastify.addHook('onRequest', async (request, reply) => {
+    request.commit = fastify.commit
   })
 }
 

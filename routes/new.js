@@ -45,6 +45,8 @@ export default async function (fastify) {
 
     await writeFile(filePath, content)
 
+    await request.commit(filePath, `task ${lane}/${filename} created`)
+
     return promise
   })
 

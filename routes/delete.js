@@ -75,6 +75,8 @@ export default async function (fastify) {
 
     await request.server.deleteFile({ filename, lane, filePath })
 
+    await request.commit(filePath, `task ${lane}/${filename} deleted`)
+
     return reply.redirect('/')
   })
 }
