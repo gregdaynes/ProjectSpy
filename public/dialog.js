@@ -97,7 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.onkeydown = (e) => {
+    if (e.ctrlKey && e.key === 'f') {
+      e.preventDefault()
+
+      document.getElementById('filter-input').focus()
+    }
+
     if (e.ctrlKey && e.key === 'n') {
+      console.log('test')
       e.preventDefault()
 
       const hasDirtyForm = document.querySelectorAll('[is-dirty="true"]')
@@ -110,14 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         window.location.href = '/new'
       }
-    }
-  }
-
-  document.onkeydown = (e) => {
-    if (e.ctrlKey && e.key === 'f') {
-      e.preventDefault()
-
-      document.getElementById('filter-input').focus()
     }
   }
 
