@@ -1,0 +1,24 @@
+<dialog open confirm>
+  <dialog-wrapper>
+    <header>
+      <h3>Confirm <%= it.page.title %></h3>
+
+      <form method="<%= it.actions.close.method %>" action="<%= it.actions.close.action %>">
+        <button type="submit"><%= it.actions.close.label %></button>
+      </form>
+    </header>
+
+    <dialog-main>
+      <p><%~ it.page.body %></p>
+    </dialog-main>
+
+    <footer>
+      <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
+        <button formmethod="<%= it.actions.cancel.method %>" formaction="<%= it.actions.cancel.action %>"><%= it.actions.cancel.label %></button>
+        <button formmethod="<%= it.actions.confirm.method %>" formaction="<%= it.actions.confirm.action %>"><%= it.actions.confirm.label %></button>
+      </form>
+    </footer>
+  </dialog-wrapper>
+</dialog>
+
+

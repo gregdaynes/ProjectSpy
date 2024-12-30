@@ -1,31 +1,13 @@
-<% if (it.taskLane.count) { %>
+<task-lane>
+  <task-lane-header>
+    <h2><%= it.taskLane.name %> <% if (it.taskLane.count) { %>(<%= it.taskLane.count %>)<% } %></h2>
 
-<div class="task-lane" style="height: 100%; flex-basis: calc(((100dvw - var(--s-m)) / 3) - (1 * var(--s-m))); min-width: 350px;">
-  <cover-l centered="[prime-element]" space=0 noPad style="min-height: revert;  height: 100%;">
-    <box-l class="lane-header" borderWidth=0 padding=0>
-      <cluster-l align="center" justify="space-between">
-        <h2><%= it.taskLane.name %> <% if (it.taskLane.count) { %>(<%= it.taskLane.count %>)<% } %></h2>
-
-        <%~ include('new-task.html', { ...it, slug: it.taskLane.slug }) %>
-      </cluster-l>
-    </box-l>
-
-    <stack-l space="var(--s-xs)" prime-element style="height: 100%; overflow-y: scroll;">
-      <% it.taskLane.tasks.forEach(function(task) { %>
-        <%~ include('./task.html', { task }) %>
-      <% }) %>
-    </stack-l>
-  </cover-l>
-</div>
-
-<% } else { %>
-
-<div class="task-lane" style="position: relative; padding: var(--s-m);">
-  <div style="display: flex; gap: 1rem; position: absolute; inset: 0;  writing-mode: vertical-lr; align-items: center;">
     <%~ include('new-task.html', { ...it, slug: it.taskLane.slug }) %>
-    <h2><%= it.taskLane.name %></h2>
 
-    <hr style="flex-grow: 1; border-bottom: 1px solid;">
-  </div>
-</div>
-<% } %>
+    <hr>
+  </task-lane-header>
+
+  <task-lane-body><% it.taskLane.tasks.forEach(function(task) { %>
+    <%~ include('./task.html', { task }) %>
+    <% }) %></task-lane-body>
+</task-lane>

@@ -1,73 +1,66 @@
-  <dialog open>
-    <cover-l centered="[primary-element]" minHeight="100%" noPad=true space=0>
-      <header>
-        <box-l padding="var(--s-xs)" borderWidth=0>
-          <grid-with-sidebars-l>
-            <% if (it.task.filePath) { %>
-              <h3><%= it.task.title %></h3>
-            <% } else { %>
-              <input type="text" name="name" id="name" form="updateForm">
-            <% } %>
+<dialog open>
+  <dialog-wrapper>
+    <header>
+      <% if (it.task.filePath) { %>
+        <h3><%= it.task.title %></h3>
+      <% } else { %>
+        <fieldset>
+          <label for="name">New task name</label>
 
-            <form method="get" action="/">
-              <button type="submit">
-                <span>Close</span>
-              </button>
-            </form>
-          </grid-with-sidebars-l>
-        </box-l>
-      </header>
+          <input type="text" name="name" id="name" form="updateForm" placeholder="My task to be done">
+        </fieldset>
+      <% } %>
 
-      <box-l primary-element padding="var(--s-xs)" borderWidth=0>
-        <!--<div><%~ it.task.content %></div>-->
-        <textarea name="content" id="content" form="updateForm"><%= it.task.rawContents %></textarea>
-      </box-l>
+      <form method="get" action="/">
+        <button type="submit">Close</button>
+      </form>
+    </header>
 
-      <footer>
-        <box-l padding="var(--s-xs)" borderWidth=0>
-          <cluster-l align=center justify="space-between" role="list">
-            <% if (it.task.priority) { %>
-              <box-l padding="var(--s-3xs)" role="listitem">Priority <%= it.task.priority %></box-l>
-            <% } %>
+    <dialog-main>
+      <textarea name="content" id="content" form="updateForm"><%= it.task.rawContents %></textarea>
+    </dialog-main>
 
-            <% if (it.task.tags.length > 0) { %>
-              <cluster-l align=center role="list">
-                <% it.task.tags.forEach(tag => { %>
-                  <box-l padding="var(--s-3xs)" role="listitem"><%= tag %></box-l>
-                <% }) %>
-              </cluster-l>
-            <% } %>
-          </cluster-l>
-        </box-l>
+    <% if (it.task.priority || it.task.tags.length) { %>
+    <dialog-details>
+      <% if (it.task.priority) { %>
+        <task-priority>
+          Priority <%= it.task.priority %>
+        </task-priority>
+      <% } %>
 
-        <box-l padding="var(--s-xs)" borderWidth=0>
-          <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
-            <sidebar-l side=right>
-              <select aria-label="lane" id="lane" name="lane">
-                <% it.lanes.forEach(lane => { %>
-                <option value="<%= lane[0] %>" <% if (it.task.lane === lane[0]) { %>selected<% } %>>
-                <%= lane[1] %>
-                </option>
-                <% }) %>
-              </select>
+        <% if (it.task.tags.length > 0) { %>
+        <task-tags>
+          <% it.task.tags.forEach(tag => { %>
+            <task-tag><%= tag %></task-tag>
+          <% }) %>
+        </task-tags>
+        <% } %>
+    </dialog-details>
+    <% } %>
 
-              <box-l padding=0>
-                <button-group>
-                  <button type="submit">Save</button>
+    <footer>
+      <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
+        <select aria-label="lane" id="lane" name="lane">
+          <% it.lanes.forEach(lane => { %>
+          <option value="<%= lane[0] %>" <% if (it.task.lane === lane[0]) { %>selected<% } %>>
+            <%= lane[1] %>
+          </option>
+          <% }) %>
+        </select>
 
-                  <details class="dropdown">
-                    <summary></summary>
+          <button-group>
+            <button type="submit">Save</button>
 
-                    <box-l padding=0 borderWidth=0>
-                      <button type="submit" formmethod="get" formaction="/delete/<%= it.task.filePath %>">Delete</button>
-                      <button type="submit" formmethod="get" formaction="/archive/<%= it.task.filePath %>">Archive</button>
-                    </box-l>
-                  </details>
-                </button-group>
-              </box-l>
-            </sidebar-l>
-          </form>
-        </box-l>
-      </footer>
-    </cover-l>
-  </dialog>
+            <details class="dropdown">
+              <summary></summary>
+
+              <div>
+                <button type="submit" formmethod="get" formaction="/delete/<%= it.task.filePath %>">Delete</button>
+                <button type="submit" formmethod="get" formaction="/archive/<%= it.task.filePath %>">Archive</button>
+              </div>
+            </details>
+          </button-group>
+        </form>
+    </footer>
+  </dialog-wrapper>
+</dialog>

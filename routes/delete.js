@@ -32,6 +32,7 @@ export default async function (fastify) {
       lanes: Object.entries(request.server.config.lanes),
       page: {
         title: 'Delete Task',
+        body: `Do you really want to delete <i>${task.title}</i>?`
       },
       task: {
         ...builtTask,
@@ -40,7 +41,12 @@ export default async function (fastify) {
         lane,
         filePath: task.relativePath,
       },
-      confirmDeleteDialog: true,
+      actions: {
+        close: { label: 'Close', action: `/view/${task.relativePath}`, method: 'get' },
+        cancel: { label: 'Cancel', action: `/view/${task.relativePath}`, method: 'get' },
+        confirm: { label: 'Delete', action: `/delete/${task.relativePath}`, method: 'post' },
+      },
+      confirmDialog: true,
     }
 
     return reply.view('view', data)

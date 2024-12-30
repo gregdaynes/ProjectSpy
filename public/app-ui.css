@@ -1,0 +1,363 @@
+@layer ui {
+  body {
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  application-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    justify-items: center;
+    padding: var(--s-s);
+
+    h1 {
+      grid-column: 2 / 3;
+    }
+
+    > div {
+      grid-column: 3 / 4;
+      place-self: end;
+    }
+
+    [type=search] {
+      grid-column: 1 / 4;
+    }
+  }
+
+  application-wrapper {
+    display: flex;
+    overflow: hidden;
+
+    main {
+      overflow: hidden;
+      display: flex;
+      flex: 1;
+    }
+  }
+
+  lane-reel {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: var(--s-s);
+    width: 100%;
+    padding-inline: var(--s-s);
+
+    & > * {
+      flex: 0 0 ;
+    }
+  }
+
+  button,
+  a {
+    &.with-border {
+      border: 1px solid;
+    }
+
+    &.icon {
+      padding: var(--s-xs);
+
+
+      svg {
+        height: 0.75em;
+        height: 1cap;
+        width: 0.75em;
+        width: 1cap;
+      }
+    }
+  }
+
+
+  dialog {
+    padding: 0;
+    display: flex;
+    max-width: 66dvw;
+    max-height: 66dvh;
+    width: 100%;
+    height: 100%;
+      overflow: visible;
+
+    &[open] {
+      cursor: pointer;
+
+      > * {
+        cursor: default;
+      }
+    }
+
+    &[confirm] {
+      width: revert;
+      height: revert;
+    }
+
+    &::backdrop {
+      opacity: 0.9;
+      background: inherit;
+    }
+
+    dialog-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-s);
+      padding-block: var(--s-s);
+
+      > * {
+        padding-inline: var(--s-s);
+      }
+
+      header {
+        display: flex;
+        gap: var(--s-m);
+
+        fieldset {
+          border: none;
+          flex: 1;
+        }
+
+        label {
+
+        }
+
+        h3 {
+          flex: 1;
+        }
+
+        input {
+          margin-block-start: var(--s-xs);
+        }
+
+        form {
+
+        }
+
+        button {
+
+        }
+      }
+
+      dialog-main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        textarea {
+          flex: 1;
+          background: none;
+          font-family: var(--font-mono);
+        }
+      }
+
+      dialog-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      task-priority {
+        border: 1px solid;
+        padding: var(--s-2xs);
+      }
+
+      task-tags {
+        display: flex;
+        gap: var(--s-xs);
+      }
+
+      task-tag {
+        border: 1px solid;
+        padding: var(--s-2xs);
+      }
+
+      footer {
+        form {
+          display: flex;
+          gap: var(--s-s);
+            justify-content: center;
+
+          select {
+            background: none;
+          }
+
+          button-group {
+            --_background: light-dark(rgb(255 255 255), rgb(30 30 30));
+            --_background-second: light-dark(rgb(245 245 245), rgb(40 40 30));
+            --_hover: light-dark(rgb(245 245 245), rgb(40 40 40));
+            --_hover-second: light-dark(rgb(235 235 235), rgb(50 50 50));
+
+            display: flex;
+            position: relative;
+            border: 1px solid;
+
+            button {
+              cursor: pointer;
+              padding: 1rem;
+              width: 100%;
+              text-align: center;
+
+              &:hover {
+                background: var(--_hover);
+              }
+            }
+
+            details.dropdown {
+              summary {
+                display: inline-flex;
+                cursor: pointer;
+
+                &:hover {
+                  background: var(--_hover);
+                }
+
+                &::after {
+                  content: '▾';
+                  padding: 1rem;
+                }
+
+                &::-webkit-details-marker {
+                  display: none;
+                }
+              }
+
+              &[open] {
+                > summary {
+                  background: var(--_hover);
+                }
+
+                > div {
+                  background: var(--_background-second);
+                  left: 0;
+                  width: 100%;
+                  position: absolute;
+                  z-index: calc(infinity);
+                  border: 1px solid;
+                  border-top: none;
+                  box-sizing: padding-box;
+                  margin-inline: -1px;
+                  width: calc(100% + 2px);
+
+                  button {
+                    box-sizing: border-box;
+                    cursor: pointer;
+
+                    &:hover {
+                      background: var(--_hover-second);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  #filter-input {
+    &:not(:focus):placeholder-shown {
+      height: 0;
+      overflow: hidden;
+      padding: 0;
+      border: none;
+      display: block;
+    }
+  }
+
+  task-lane {
+    display: flex;
+    flex-direction: column;
+
+    &:has(task-lane-body:empty) {
+      position: relative;
+      padding: var(--s-m);
+
+      task-lane-header {
+        display: flex;
+        gap: 1rem;
+        position: absolute;
+        inset: 0;
+        writing-mode: vertical-lr;
+        align-items: center;
+        border: none;
+        flex-wrap: nowrap;
+
+        h2 {
+          order: 2;
+          text-wrap: nowrap;
+        }
+
+        hr {
+          order: 3;
+          margin: unset;
+        }
+      }
+    }
+
+    &:has(task-lane-body:not(:empty)) {
+      height: 100%;
+      flex-basis: calc(((100dvw - var(--s-s)) / 3) - (1 * var(--s-s)));
+      min-width: 350px;
+    }
+
+    task-lane-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+
+      a {
+        flex-shrink: 0;
+      }
+
+      hr {
+        flex-basis: 100%;
+        flex-grow: 1;
+        margin-block-start: var(--s-s);
+        border: 1px solid;
+      }
+    }
+
+    task-lane-body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-xs);
+      height: 100%;
+      overflow-y: scroll;
+      padding-block: var(--s-s);
+    }
+  }
+
+  task-lane .task:last-child {
+    margin-block-end: var(--s-m);
+  }
+
+  task-lane .task:first-child {
+    margin-block-start: var(--s-m);
+  }
+
+
+  .hidden {
+    display: none;
+  }
+
+  task-l {
+    border: 1px solid;
+    padding: var(--s-s);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-xs);
+
+    task-header {
+
+    }
+
+    task-footer {
+
+    }
+
+    task-body {
+
+    }
+  }
+}

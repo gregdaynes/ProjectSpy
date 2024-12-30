@@ -35,6 +35,7 @@ export default async function (fastify) {
       lanes: Object.entries(request.server.config.lanes),
       page: {
         title: 'Archive Task',
+        body: `Do you really want to archive <i>${task.title}</i>?`
       },
       task: {
         ...builtTask,
@@ -43,7 +44,12 @@ export default async function (fastify) {
         lane,
         filePath: task.relativePath,
       },
-      confirmArchiveDialog: true,
+      actions: {
+        close: { label: 'Close', action: `/view/${task.relativePath}`, method: 'get' },
+        cancel: { label: 'Cancel', action: `/view/${task.relativePath}`, method: 'get' },
+        confirm: { label: 'Archive', action: `/archive/${task.relativePath}`, method: 'post' },
+      },
+      confirmDialog: true,
     }
 
     return reply.view('view', data)

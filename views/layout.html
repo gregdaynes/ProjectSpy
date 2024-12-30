@@ -21,40 +21,30 @@
     <link rel="stylesheet" href="/assets/variables.css">
     <link rel="stylesheet" href="/assets/reset.css">
     <link rel="stylesheet" href="/assets/global.css">
-    <link rel="stylesheet" href="/assets/layouts.css">
-    <script type="module" src="/assets/layouts.js"></script>
+    <link rel="stylesheet" href="/assets/app-ui.css">
     <script type="module" src="/assets/dialog.js"></script>
   </head>
 	<body>
-    <stack-l style="max-height: 100dvh;">
-      <header style="padding: var(--s-s);">
-        <grid-with-sidebars-l>
-          <div></div>
+    <application-header>
+      <h1>ProjectSpy</h1>
 
-          <h1>ProjectSpy</h1>
+      <div>
+        <%~ include('filter-button.html') %>
+      </div>
 
-          <div>
-            <%~ include('filter-button.html') %>
-          </div>
-        </grid-with-sidebars-l>
+      <input type="search" id="filter-input" placeholder="Find task">
+    </application-header>
 
-        <input type="search" id="filter-input" placeholder="Find task">
-      </header>
-
+    <application-wrapper>
       <%~ it.body %>
-    </stack-l>
-
+    </application-wrapper>
 
     <% if (it.viewDialog) { %>
-    <%~ include('dialog.html', it) %>
+      <%~ include('dialog.html', it) %>
     <% } %>
 
-    <% if (it.confirmDeleteDialog) { %>
-    <%~ include('confirm-delete-dialog.html', it) %>
-    <% } %>
-
-    <% if (it.confirmArchiveDialog) { %>
-    <%~ include('confirm-archive-dialog.html', it) %>
+    <% if (it.confirmDialog) { %>
+      <%~ include('confirm-dialog.html', it) %>
     <% } %>
 
     <script type="application/json" id="search-data">
