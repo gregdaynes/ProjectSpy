@@ -72,7 +72,7 @@ export default async function (fastify) {
       page: {
         title: 'New Task',
       },
-      lanes: request.config.lanes,
+      lanes: Object.entries(request.config.lanes),
       task: {
         task: 'New Task',
         content: '',

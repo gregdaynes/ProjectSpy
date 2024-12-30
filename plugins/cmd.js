@@ -38,7 +38,7 @@ export default fp(
       }
       const name = slugify(title, { strict: true, lower: true }) + '.md'
 
-      const lanes = fastify.config.lanes.map(([_lane, name], i) => `[${i}] ${name}`)
+      const lanes = Object.entries(fastify.config.lanes).map(([_lane, name], i) => `[${i}] ${name}`)
       const laneQuestion = [
         'Which lane?',
         ...lanes,
@@ -52,7 +52,7 @@ export default fp(
       }
 
       // create file
-      const lanePath = join(process.cwd(), fastify.config.dirPath, fastify.config.lanes[lane][0])
+      const lanePath = join(process.cwd(), fastify.config.dirPath, Object.entries(fastify.config.lanes)[lane][0])
       const lanePathExists = await pathExists(lanePath)
       if (!lanePathExists) {
         console.error('Lane directory does not exist. Run \'projectspy init\' to create directories')
@@ -62,7 +62,7 @@ export default fp(
       const filePath = join(lanePath, name)
       const filePathExists = await pathExists(filePath)
       if (filePathExists) {
-        console.error(`Task already exists in ${fastify.config.lanes[lane][1]}`)
+        console.error(`Task already exists in ${Object.entries(fastify.config.lanes)[lane][1]}`)
         process.exit(1)
       }
 

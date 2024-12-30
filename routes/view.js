@@ -31,7 +31,7 @@ export default async function (fastify) {
 
     const data = {
       ...reply.locals,
-      lanes: request.server.config.lanes,
+      lanes: Object.entries(request.server.config.lanes),
       page: {
         title: 'Task',
       },

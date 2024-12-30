@@ -1,5 +1,7 @@
-<div class="task-lane" style="height: 100%;">
-  <cover-l centered="[prime-element]" space=0 noPad style="min-width: 350px; min-height: revert;  height: 100%;">
+<% if (it.taskLane.count) { %>
+
+<div class="task-lane" style="height: 100%; flex-basis: calc(((100dvw - var(--s-m)) / 3) - (1 * var(--s-m))); min-width: 350px;">
+  <cover-l centered="[prime-element]" space=0 noPad style="min-height: revert;  height: 100%;">
     <box-l class="lane-header" borderWidth=0 padding=0>
       <cluster-l align="center" justify="space-between">
         <h2><%= it.taskLane.name %> <% if (it.taskLane.count) { %>(<%= it.taskLane.count %>)<% } %></h2>
@@ -15,3 +17,15 @@
     </stack-l>
   </cover-l>
 </div>
+
+<% } else { %>
+
+<div class="task-lane" style="position: relative; padding: var(--s-m);">
+  <div style="display: flex; gap: 1rem; position: absolute; inset: 0;  writing-mode: vertical-lr; align-items: center;">
+    <%~ include('new-task.html', { ...it, slug: it.taskLane.slug }) %>
+    <h2><%= it.taskLane.name %></h2>
+
+    <hr style="flex-grow: 1; border-bottom: 1px solid;">
+  </div>
+</div>
+<% } %>

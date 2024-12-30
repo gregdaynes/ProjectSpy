@@ -44,7 +44,7 @@ export default function (fastify, opts) {
   fastify.decorate('preHandlerTaskLanes', async (request, reply) => {
     reply.locals.taskLanes = []
 
-    for (const [slug, name] of request.config.lanes) {
+    for (const [slug, name] of Object.entries(request.config.lanes)) {
       const tasks = [...request.taskList().get(slug)]
         .map(task => request.buildTask(task[1]))
         .sort((a, b) => b.priority - a.priority)

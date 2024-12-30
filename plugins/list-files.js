@@ -6,7 +6,7 @@ import chokidar from 'chokidar'
 export default fp(
   async function (fastify) {
     const dir = join(process.cwd(), fastify.config.dirPath)
-    const lanes = fastify.config.lanes.map(([lane]) => lane)
+    const lanes = Object.entries(fastify.config.lanes).map(([lane]) => lane)
     const taskList = new Map()
 
     // each lane should be it's own map
@@ -21,7 +21,7 @@ export default fp(
       })
 
       watcher.on('add', async function (path) {
-        fastify.log.debug({ path }, 'File added')
+        //fastify.log.debug({ path }, 'File added')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
         if (lanes.includes(lane)) {
@@ -33,7 +33,7 @@ export default fp(
       })
 
       watcher.on('change', async function (path) {
-        fastify.log.debug({ path }, 'File changed')
+        //fastify.log.debug({ path }, 'File changed')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
         if (lanes.includes(lane)) {
@@ -45,7 +45,7 @@ export default fp(
       })
 
       watcher.on('unlink', function (path) {
-        fastify.log.debug({ path }, 'File unlinked')
+        //fastify.log.debug({ path }, 'File unlinked')
         const [, lane, filename] = path.replace(dir, '').split('/')
 
         if (lanes.includes(lane)) {
