@@ -1,7 +1,7 @@
 <dialog open class="confirm">
   <cover-l centered="[primary-element]" minHeight="100%" noPad=true space=0>
     <header>
-      <box-l padding="var(--s-xs)" borderWidth=1>
+      <box-l padding="var(--s-xs)" borderWidth=0>
         <grid-with-sidebars-l>
           <h3>Confirm</h3>
 
@@ -14,12 +14,12 @@
       </box-l>
     </header>
 
-    <box-l primary-element>
+    <box-l primary-element borderWidth=0>
       <p>Do you really want to archive <i><%= it.task.title %><i></p>
     </box-l>
 
     <footer>
-      <box-l padding="var(--s-xs)" borderWidth=1>
+      <box-l padding="var(--s-xs)" borderWidth=0>
         <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
           <cluster-l align=center justify=end>
           <button type="submit" formmethod="get" formaction="/view/<%= it.task.filePath %>">Cancel</button>

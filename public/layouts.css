@@ -306,5 +306,6 @@ details.dropdown {
     overflow: hidden;
     padding: 0;
     border: none;
+    display: block;
   }
 }
