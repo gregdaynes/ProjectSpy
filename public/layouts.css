@@ -169,7 +169,7 @@ dialog {
     overflow: visible;
     cursor: pointer;
 
-    * {
+    *:not(button, span, input, textarea) {
       cursor: default;
     }
   }
@@ -215,31 +215,34 @@ dialog.confirm {
 
 
 button-group {
-  --color-base: #1e1e1e;
-  --color-hover: #333;
+  --_background: light-dark(rgb(255 255 255), rgb(30 30 30));
+  --_background-second: light-dark(rgb(245 245 245), rgb(40 40 30));
+  --_hover: light-dark(rgb(245 245 245), rgb(40 40 40));
+  --_hover-second: light-dark(rgb(235 235 235), rgb(50 50 50));
 
-  display: inline-flex;
+  display: flex;
   position: relative;
 
   button {
-    background: var(--color-base);
-    border: 0;
     cursor: pointer;
     padding: 1rem;
     width: 100%;
+    text-align: center;
 
     &:hover {
-      background: var(--color-hover);
+      background: var(--_hover);
     }
   }
 }
 
 details.dropdown {
-  display: inline;
-
   summary {
     display: inline-flex;
-    background-color: var(--color-base);
+      cursor: pointer;
+
+    &:hover {
+      background: var(--_hover);
+    }
 
     &::after {
       content: '▾';
@@ -251,30 +254,30 @@ details.dropdown {
     }
   }
 
-  button:hover,
-  summary:not(:has(button:hover)):hover {
-    background: var(--color-hover);
-  }
-
-
   &[open] {
-    summary::after {
-      background-color: var(--color-hover);
+    > summary {
+      background: var(--_hover);
     }
 
     > *:not(summary) {
-      flex-direction: column;
+      background: var(--_background-second);
       left: 0;
       width: 100%;
       position: absolute;
       z-index: calc(infinity);
+      border: 1px solid;
+      border-top: none;
+      box-sizing: padding-box;
+      margin-inline: -1px;
+      width: calc(100% + 2px);
 
       button {
         box-sizing: border-box;
-      }
+        cursor: pointer;
 
-      > * + * {
-        border-top: 1px solid;
+        &:hover {
+          background: var(--_hover-second);
+        }
       }
     }
   }
