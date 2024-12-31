@@ -1,70 +1,62 @@
-import { join } from 'node:path'
 import fp from 'fastify-plugin'
 import TaskFactory from '../task.js'
 import chokidar from 'chokidar'
 
-export default fp(
-  async function (fastify) {
-    const dir = join(process.cwd(), fastify.config.dirPath)
-    const lanes = Object.entries(fastify.config.lanes).map(([lane]) => lane)
-    const taskList = new Map()
+const plugin = {
+  name: 'list-files',
+  dependencies: ['application-config', 'application-events'],
+}
 
-    // each lane should be it's own map
-    for (const lane of lanes) {
-      taskList.set(lane, new Map())
-    }
+export default fp(async (fastify) => {
+  const diskNames = fastify.config.lanes.map(([diskName]) => diskName)
+  const taskLanes = new Map()
 
-    fastify.addHook('onReady', async () => {
-      const watcher = chokidar.watch(dir, {
-        ignored: (path, stats) => stats?.isFile() && !path.endsWith('.md'), // only watch md files
-        persistent: true
-      })
+  for (const diskName of [...diskNames, '_archive']) {
+    taskLanes.set(diskName, new Map())
+  }
 
-      watcher.on('add', async function (path) {
-        //fastify.log.debug({ path }, 'File added')
-        const [, lane, filename] = path.replace(dir, '').split('/')
-
-        if (lanes.includes(lane)) {
-          const task = await TaskFactory(path, dir)
-          taskList.get(lane).set(filename, task)
-        }
-
-        fastify.eventBus().emit(`task:change:${lane}:${filename}`)
-      })
-
-      watcher.on('change', async function (path) {
-        //fastify.log.debug({ path }, 'File changed')
-        const [, lane, filename] = path.replace(dir, '').split('/')
-
-        if (lanes.includes(lane)) {
-          const task = await TaskFactory(path, dir)
-          taskList.get(lane).set(filename, task)
-        }
-
-        fastify.eventBus().emit(`task:change:${lane}:${filename}`)
-      })
-
-      watcher.on('unlink', function (path) {
-        //fastify.log.debug({ path }, 'File unlinked')
-        const [, lane, filename] = path.replace(dir, '').split('/')
-
-        if (lanes.includes(lane)) {
-          taskList.get(lane).delete(filename)
-        }
-
-        fastify.eventBus().emit(`task:delete:${lane}:${filename}`)
-      })
-
-      watcher.on('error', function (err) {
-        fastify.log.error({ err }, 'File change error')
-      })
+  fastify.addHook('onReady', async () => {
+    const watcher = chokidar.watch(fastify.config.absolutePath, {
+      // only watch md files
+      ignored: (path, stats) => stats?.isFile() && !path.endsWith('.md'),
+      persistent: true
     })
 
-    fastify.decorate('taskList', () => taskList)
-  },
+    const setTaskFn = setTaskList.bind(null, fastify, taskLanes)
 
-  {
-    name: 'list-files',
-    dependencies: ['application-config', 'application-events'],
+    watcher.on('add', setTaskFn.bind(null, 'change'))
+    watcher.on('change', setTaskFn.bind(null, 'change'))
+    watcher.on('unlink', setTaskFn.bind(null, 'delete'))
+    watcher.on('error', function (err) {
+      fastify.log.error({ err }, 'File change error')
+    })
+  })
+
+  fastify.decorate('taskLanes', () => taskLanes)
+
+  fastify.log.debug({ plugin }, 'Loaded plugin')
+}, plugin)
+
+/**
+ * @param {FastifyInstance} fastify fastify instance
+ * @param {Map} taskLanes map of task lanes indexed by diskName
+ * @param {string} eventName name of event to emit on completion
+ * @param {string} path file path from event
+ * @returns {void}
+ */
+async function setTaskList (fastify, taskLanes, eventName, path) {
+  fastify.log.debug({ taskLanes, eventName, path }, 'setTaskList')
+  const [, relativeDir, fileName] = path.replace(fastify.config.absolutePath, '').split('/')
+  const taskLane = taskLanes.get(relativeDir)
+  if (!taskLane) return
+
+  if (eventName === 'delete') {
+    taskLane.delete(fileName)
+  } else {
+    const task = await TaskFactory(path, fastify.config.absolutePath)
+    taskLane.set(fileName, task)
   }
-)
+
+  fastify.eventBus().emit(`task:${eventName}:${relativeDir}:${fileName}`)
+  fastify.log.debug({ path }, `File ${eventName}`)
+}

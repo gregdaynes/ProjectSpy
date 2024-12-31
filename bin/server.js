@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 // Read the .env file.
-import * as dotenv from 'dotenv'
 import { join } from 'path'
 import open from 'open'
 import { parseArgs } from 'node:util'
@@ -11,9 +10,6 @@ import Fastify from 'fastify'
 
 // Require library to exit fastify process, gracefully (if possible)
 import closeWithGrace from 'close-with-grace'
-
-// Dotenv config
-dotenv.config()
 
 const { positionals, } = parseArgs({
   options: {

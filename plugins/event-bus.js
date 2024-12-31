@@ -1,16 +1,19 @@
 import fp from 'fastify-plugin'
 import { EventEmitter } from 'node:events'
 
-export default fp(
-  async function (fastify, opts) {
-    const bus = new EventEmitter({ captureRejections: true })
+const plugin = {
+  name: 'application-events',
+  dependencies: []
+}
 
-    bus.on('error', (err) => {
-      fastify.log.error({ err }, 'Error on event-bus')
-    })
+export default fp(async (fastify) => {
+  const bus = new EventEmitter({ captureRejections: true })
 
-    fastify.decorate('eventBus', () => bus)
-  }, {
-    name: 'application-events'
-  }
-)
+  bus.on('error', (err) => {
+    fastify.log.error({ err }, 'Error on event-bus')
+  })
+
+  fastify.decorate('eventBus', () => bus)
+
+  fastify.log.debug({ plugin }, 'Loaded plugin')
+}, plugin)

@@ -39,6 +39,7 @@
 		"fastify-plugin": "^5.0.1",
 		"fluent-json-schema": "^5.0.0",
 		"html-minifier": "^4.0.0",
+		"lib": "file:lib",
 		"livereload-js": "^4.0.2",
 		"marked": "^15.0.4",
 		"open": "^10.1.0",

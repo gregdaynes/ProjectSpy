@@ -1,22 +1,13 @@
 import fp from 'fastify-plugin'
-import fs from 'node:fs/promises'
+import { pathExists } from 'lib/utils.js'
 
-export default fp(
-  async function (fastify, _opts) {
-    fastify.decorate('pathExists', async function (path) {
-      try {
-        await fs.stat(path)
-        return true
-      } catch (err) {
-        if (err.code === 'ENOENT') {
-          return false
-        }
+const plugin = {
+  name: 'application-utils',
+  dependencies: []
+}
 
-        throw new Error(err)
-      }
-    })
-  },
-  {
-    name: 'application-utils'
-  }
-)
+export default fp(async (fastify) => {
+  fastify.decorate('pathExists', pathExists)
+
+  fastify.log.debug({ plugin }, 'Loaded plugin')
+}, plugin)

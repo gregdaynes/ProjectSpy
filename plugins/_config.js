@@ -1,52 +1,39 @@
 import fp from 'fastify-plugin'
-import fs from 'node:fs/promises'
-import { join } from 'node:path'
+import { pathExists, buildPath } from 'lib/utils.js'
+import '../types.js'
 
-export default fp(
-  async function pluginConfig (fastify, _opts) {
-    // check if configuration file v
-    const path = join(process.cwd(), '.projectSpy', 'projectspy.json')
-    const exists = await pathExists(path)
-
-    if (exists) {
-      const { default: config } = await import(path, { with: { type: 'json' }})
-
-      fastify.decorate('config', {
-        ...config,
-        maxAge: 600000,
-        dirPath: '.projectSpy',
-      })
-
-    } else {
-      fastify.decorate('config', {
-        maxAge: 600000,
-        dirPath: '.projectSpy',
-        lanes: {
-          backlog: 'Backlog',
-          'in-progress': 'In Progress',
-          done: 'Done',
-        },
-      })
-    }
-  },
-  {
-    name: 'application-config',
-  }
-)
-
-/**
- *
- * @param path
- */
-async function pathExists (path) {
-  try {
-    await fs.stat(path)
-    return true
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      return false
-    }
-
-    throw new Error(err)
-  }
+const plugin = {
+  name: 'application-config',
+  dependencies: []
 }
+
+export default fp(async (fastify) => {
+  /**
+   * @var {PSConfig}
+   */
+  let config = {
+    minifyHtml: true,
+    maxAge: 600000, // 10 minutes
+    dirPath: '.projectSpy',
+    absolutePath: buildPath('.projectSpy'),
+    lanes: {
+      backlog: 'Backlog',
+      'in-progress': 'In Progress',
+      done: 'Done',
+    },
+  }
+
+  // load custom configuration file if exists
+  const path = buildPath(config.dirPath, 'projectspy.json')
+  if (await pathExists(path)) {
+    const { default: customConfig } = await import(path, { with: { type: 'json' }})
+
+    config = Object.assign(config, customConfig)
+  }
+
+  config.lanes = Object.entries(config.lanes)
+
+  fastify.decorate('config', config)
+
+  fastify.log.debug({ plugin, config }, 'Loaded plugin')
+}, plugin)

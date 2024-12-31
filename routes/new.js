@@ -34,20 +34,13 @@ export default async function (fastify) {
 
     const filePath = join(request.config.dirPath, lane, filename)
 
-    const { promise, resolve, reject } = Promise.withResolvers()
-
-    request.eventBus.on(`task:change:${lane}:${filename}`, () => {
-      reply.redirect(`/view/${lane}/${filename}`)
-      resolve()
-    })
-
     content = request.logToTask(content, 'Created task')
 
     await writeFile(filePath, content)
 
     await request.commit(filePath, `task ${lane}/${filename} created`)
 
-    return promise
+    return reply.redirect(`/view/${lane}/${filename}`)
   })
 
   fastify.get('/new', {
@@ -72,7 +65,7 @@ export default async function (fastify) {
       page: {
         title: 'New Task',
       },
-      lanes: Object.entries(request.config.lanes),
+      lanes: request.config.lanes,
       task: {
         task: 'New Task',
         content: '',

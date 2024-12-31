@@ -32,7 +32,7 @@ export default async function (fastify) {
 
     const data = {
       ...reply.locals,
-      lanes: Object.entries(request.server.config.lanes),
+      lanes: request.server.config.lanes,
       page: {
         title: 'Archive Task',
         body: `Do you really want to archive <i>${task.title}</i>?`
