@@ -27,24 +27,21 @@ export default async function (fastify) {
       fastify.preHandlerTaskLanes,
     ]
   }, async (request, reply) => {
-    const { lane, task, filename, builtTask } = request.ctx
+    const { task, builtTask } = request.ctx
 
     const data = {
       ...reply.locals,
-      lanes: request.server.config.lanes,
       page: {
         title: 'Task',
       },
       task: {
         ...builtTask,
-        content: task.render(),
         rawContents: task.rawContents(),
-        lane,
         filePath: task.relativePath,
-        actions: {
-          ...task.actions,
-          update: `/update/${lane}/${filename}`
-        }
+        // actions
+          // view
+          // update
+          // archive
       },
       viewDialog: true
     }

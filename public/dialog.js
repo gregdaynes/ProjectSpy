@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const filterField = document.getElementById('filter-input')
   if (filterField) {
-    const tasks = document.querySelectorAll('.task')
+    const tasks = document.querySelectorAll('task-l')
 
     filterField.addEventListener('keyup', (e) => {
       if (e.target.value === '') {

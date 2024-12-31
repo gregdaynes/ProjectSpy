@@ -28,6 +28,7 @@
   application-wrapper {
     display: flex;
     overflow: hidden;
+    flex: 1;
 
     main {
       overflow: hidden;
@@ -43,6 +44,7 @@
     gap: var(--s-s);
     width: 100%;
     padding-inline: var(--s-s);
+    justify-content: center;
 
     & > * {
       flex: 0 0 ;
@@ -290,6 +292,7 @@
         hr {
           order: 3;
           margin: unset;
+          border-bottom: none;
         }
       }
     }

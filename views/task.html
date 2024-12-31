@@ -12,8 +12,8 @@
   </task-body>
 
   <task-footer>
-    <% Object.entries(it.task.actions).forEach(function([label, value]) { %>
-    <a href="<%= value %>"><%= label %></a>
+    <% Object.values(it.task.actions).forEach(function({ action, label }) { %>
+      <a href="<%= action %>"><%= label %></a>
     <% }) %>
   </task-footer>
 </task-l>

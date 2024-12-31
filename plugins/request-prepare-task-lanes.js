@@ -12,7 +12,7 @@ export default fp(async (fastify) => {
 
     for (const [slug, name] of request.config.lanes) {
       const tasks = [...request.taskLanes().get(slug)]
-        .map(task => fastify.buildTask(task[1]))
+        .map(([, task]) => fastify.buildTask(task))
         .sort((a, b) => b.priority - a.priority)
 
       const lane = {

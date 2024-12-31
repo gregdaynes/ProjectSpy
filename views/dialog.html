@@ -39,26 +39,32 @@
     <% } %>
 
     <footer>
-      <form id="updateForm" method="post" action="<%= it.task.actions.update %>">
+      <form id="updateForm" method="<%= it.task.actions.update.method %>" action="<%= it.task.actions.update.action %>">
         <select aria-label="lane" id="lane" name="lane">
-          <% it.lanes.forEach(lane => { %>
-          <option value="<%= lane[0] %>" <% if (it.task.lane === lane[0]) { %>selected<% } %>>
-            <%= lane[1] %>
+          <% it.taskLanes.forEach(lane => { %>
+          <option value="<%= lane.slug %>" <% if (it.task.lane === lane.slug) { %>selected<% } %>>
+            <%= lane.name %>
           </option>
           <% }) %>
         </select>
 
           <button-group>
-            <button type="submit">Save</button>
+            <button type="submit"><%= it.task.actions.update.label %></button>
 
-            <details class="dropdown">
-              <summary></summary>
+            <% if (it.task.actions.delete || it.task.actions.archive) { %>
+              <details class="dropdown">
+                <summary></summary>
 
-              <div>
-                <button type="submit" formmethod="get" formaction="/delete/<%= it.task.filePath %>">Delete</button>
-                <button type="submit" formmethod="get" formaction="/archive/<%= it.task.filePath %>">Archive</button>
-              </div>
-            </details>
+                <div>
+                  <% if (it.task.actions.delete) { %>
+                  <button type="submit" formmethod="<%= it.task.actions.delete.method %>" formaction="<%= it.task.actions.delete.action %>"><%= it.task.actions.delete.label %></button>
+                  <% } %>
+                  <% if (it.task.actions.archive) { %>
+                    <button type="submit" formmethod="<%= it.task.actions.archive.method %>" formaction="<%= it.task.actions.archive.action %>"><%= it.task.actions.archive.label %></button>
+                  <% } %>
+                </div>
+              </details>
+            <% } %>
           </button-group>
         </form>
     </footer>

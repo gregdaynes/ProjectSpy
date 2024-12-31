@@ -65,7 +65,6 @@ export default async function (fastify) {
       page: {
         title: 'New Task',
       },
-      lanes: request.config.lanes,
       task: {
         task: 'New Task',
         content: '',
@@ -73,7 +72,7 @@ export default async function (fastify) {
         lane: lane || null,
         tags: [],
         actions: {
-          update: '/create'
+          update: { label: 'Create', action: '/create', method: 'post' },
         },
         filePath: '',
       },
