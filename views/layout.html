@@ -7,32 +7,36 @@
 
     <title><%= it.page.title %></title>
 
+    <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="manifest" href="/manifest.json">
-    <script type="module">
-      if ('serviceWorker' in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.register('/assets/sw.js')
-        } catch (err) {
-          console.error('Error during service worker registration:', e);
+    <script type="importmap">
+      {
+        "imports": {
+          "filter.js": "/assets/js/filter.js",
+          "confirm-dialog.js": "/assets/js/confirm-dialog.js",
+          "task-dialog.js": "/assets/js/task-dialog.js",
+          "info-dialog.js": "/assets/js/info-dialog.js"
         }
       }
     </script>
-
-    <link rel="stylesheet" href="/assets/variables.css">
-    <link rel="stylesheet" href="/assets/reset.css">
-    <link rel="stylesheet" href="/assets/global.css">
-    <link rel="stylesheet" href="/assets/app-ui.css">
-    <script type="module" src="/assets/dialog.js"></script>
+    <script type="module" src="/assets/js/app.js"></script>
+    <script type="module">
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register('/assets/js/sw.js')
+      } catch (err) {
+        console.error('Error during service worker registration:', e);
+      }
+    }
+    </script>
   </head>
 	<body>
     <application-header>
+      <%~ include('info-dialog.html') %>
+
       <h1>ProjectSpy</h1>
 
-      <div>
-        <%~ include('filter-button.html') %>
-      </div>
-
-      <input type="search" id="filter-input" placeholder="Find task">
+      <%~ include('filter.html', it) %>
     </application-header>
 
     <application-wrapper>
@@ -40,15 +44,11 @@
     </application-wrapper>
 
     <% if (it.viewDialog) { %>
-      <%~ include('dialog.html', it) %>
+      <%~ include('task-dialog.html', it) %>
     <% } %>
 
     <% if (it.confirmDialog) { %>
       <%~ include('confirm-dialog.html', it) %>
     <% } %>
-
-    <script type="application/json" id="search-data">
-      <%~ it.searchObject %>
-    </script>
 	</body>
 </html>
