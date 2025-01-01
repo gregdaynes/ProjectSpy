@@ -76,6 +76,10 @@
         width: 1cap;
       }
     }
+
+    &.close {
+      padding: var(--s-2xs);
+    }
   }
 
   task-dialog dialog {
