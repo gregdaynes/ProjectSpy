@@ -1,6 +1,7 @@
 import { join } from 'node:path'
-import { writeFile } from 'node:fs/promises'
 import slugify from 'slugify'
+import { randomBytes } from 'node:crypto'
+import { pathExists } from 'lib/utils.js'
 
 /**
  *
@@ -30,9 +31,15 @@ export default async function (fastify) {
     const { lane, name } = request.body
     let contents = request.body.content
 
-    const filename = slugify(name, { strict: true, lower: true }) + '.md'
+    let filename = slugify(name, { strict: true, lower: true }) + '.md'
+    let filePath = join(request.config.dirPath, lane, filename)
 
-    const filePath = join(request.config.dirPath, lane, filename)
+    if (await pathExists(filePath)) {
+      const suffix = randomBytes(3).toString('hex')
+
+      filename = slugify(name, { strict: true, lower: true }) + `-${suffix}.md`
+      filePath = join(request.config.dirPath, lane, filename)
+    }
 
     contents = request.logToTask(contents, 'Created task')
 

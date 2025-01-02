@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
+import { join } from 'node:path'
 import fp from 'fastify-plugin'
 import { pathExists } from 'lib/utils.js'
-import { join } from 'node:path'
 
 const plugin = {
   name: 'file-system',
