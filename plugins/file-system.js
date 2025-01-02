@@ -1,5 +1,7 @@
 import fs from 'node:fs/promises'
 import fp from 'fastify-plugin'
+import { pathExists } from 'lib/utils.js'
+import { join } from 'node:path'
 
 const plugin = {
   name: 'file-system',
@@ -32,7 +34,18 @@ export default fp(async (fastify) => {
     })
 
     try {
-      fs.writeFile(filePath, contents)
+      if (!fastify.config.laneKeys.includes(lane)) {
+        return reject('Lane invalid')
+      }
+
+      const lanePath = join(fastify.config.absolutePath, lane)
+      if (!await pathExists(lanePath)) {
+        await fs.mkdir(lanePath, { recursive: true })
+
+        fastify.log.debug({ lanePath }, 'Created lane directory')
+      }
+
+      await fs.writeFile(filePath, contents)
     } catch (err) {
       fastify.log.error({ lane, filePath, filename }, 'Attempted to write file')
       return reject(err)

@@ -31,6 +31,7 @@ export default fp(async (fastify) => {
     config = Object.assign(config, customConfig)
   }
 
+  config.laneKeys = Object.keys(config.lanes)
   config.lanes = Object.entries(config.lanes)
 
   fastify.decorate('config', config)

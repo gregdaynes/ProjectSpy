@@ -28,15 +28,15 @@ export default async function (fastify) {
     }
   }, async (request, reply) => {
     const { lane, name } = request.body
-    let content = request.body.content
+    let contents = request.body.content
 
     const filename = slugify(name, { strict: true, lower: true }) + '.md'
 
     const filePath = join(request.config.dirPath, lane, filename)
 
-    content = request.logToTask(content, 'Created task')
+    contents = request.logToTask(contents, 'Created task')
 
-    await writeFile(filePath, content)
+    await request.server.changeFile({ lane, filePath, filename, contents })
 
     await request.commit(filePath, `task ${lane}/${filename} created`)
 
