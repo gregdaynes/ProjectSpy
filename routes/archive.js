@@ -1,7 +1,4 @@
-import { readFile, mkdir } from 'node:fs/promises'
-import { join, parse } from 'node:path'
-import { randomBytes } from 'node:crypto'
-import { pathExists } from 'lib/utils.js'
+import { join } from 'node:path'
 
 /**
  *
@@ -77,43 +74,12 @@ export default async function (fastify) {
       fastify.preHandlerParams,
     ]
   }, async (request, reply) => {
-    const { lane, filename, filePath } = request.ctx
+    const { lane, filename } = request.ctx
 
-    const exists = await request.server.pathExists(filePath)
-    if (!exists) {
-      return reply.redirect('/')
-    }
+    const { fileName, filePath: updatedFilePath } = await request.server.v2archive({ fileName: filename, lane })
 
-    let fileContent = await readFile(filePath, { encoding: 'utf-8' })
-    let updatedFileName = filename
-    let updatedFilePath = join(request.server.config.dirPath, '_archive', updatedFileName)
-
-    const lanePath = join(fastify.config.absolutePath, '_archive')
-    if (!await pathExists(lanePath)) {
-      await mkdir(lanePath, { recursive: true })
-
-      fastify.log.debug({ lanePath }, 'Created lane directory')
-    }
-
-    if (await pathExists(updatedFilePath)) {
-      const suffix = randomBytes(3).toString('hex')
-      const { base, ext } = parse(updatedFilePath)
-      updatedFileName = `${base}-${suffix}${ext}`
-      updatedFilePath = join(request.config.dirPath, '_archive', updatedFileName)
-    }
-
-    fileContent = request.logToTask(fileContent, 'Archived task')
-
-    await request.server.changeFile({
-      lane: '_archive',
-      filename: updatedFileName,
-      filePath: updatedFilePath,
-      contents: fileContent
-    })
-
-    await request.server.deleteFile({ filename, lane, filePath })
-
-    await request.commit([filePath, updatedFilePath], `task ${lane}/${updatedFileName} archived`)
+    const _filePath = join(fastify.config.absolutePath, lane, filename)
+    await request.commit([_filePath, updatedFilePath], `task ${lane}/${fileName} archived`)
 
     return reply.redirect('/')
   })

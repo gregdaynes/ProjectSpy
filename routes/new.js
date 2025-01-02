@@ -1,8 +1,3 @@
-import { join } from 'node:path'
-import slugify from 'slugify'
-import { randomBytes } from 'node:crypto'
-import { pathExists } from 'lib/utils.js'
-
 /**
  *
  * @param fastify
@@ -29,25 +24,19 @@ export default async function (fastify) {
     }
   }, async (request, reply) => {
     const { lane, name } = request.body
-    let contents = request.body.content
-
-    let filename = slugify(name, { strict: true, lower: true }) + '.md'
-    let filePath = join(request.config.dirPath, lane, filename)
-
-    if (await pathExists(filePath)) {
-      const suffix = randomBytes(3).toString('hex')
-
-      filename = slugify(name, { strict: true, lower: true }) + `-${suffix}.md`
-      filePath = join(request.config.dirPath, lane, filename)
+    if (!fastify.config.laneKeys.includes(lane)) {
+      throw new Error('Lane invalid')
     }
 
-    contents = request.logToTask(contents, 'Created task')
+    const contents = request.body.content
 
-    await request.server.changeFile({ lane, filePath, filename, contents })
-
-    await request.commit(filePath, `task ${lane}/${filename} created`)
-
-    return reply.redirect(`/view/${lane}/${filename}`)
+    try {
+      const { filePath, fileName } = await request.server.v2create({ lane, fileName: name, contents })
+      await request.commit(filePath, `task ${lane}/${fileName} created`)
+      return reply.redirect(`/view/${lane}/${fileName}`)
+    } catch (err) {
+      throw new Error(err)
+    }
   })
 
   fastify.get('/new', {

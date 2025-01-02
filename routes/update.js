@@ -1,6 +1,3 @@
-import { join } from 'node:path'
-import { readFile } from 'node:fs/promises'
-
 /**
  *
  * @param fastify
@@ -39,39 +36,20 @@ export default async function (fastify) {
       fastify.preHandlerParams,
     ]
   }, async (request, reply) => {
-    const { lane: currentLane, filename, filePath } = request.ctx
-    let { lane: updatedLane, content: updatedContent } = request.body
+    const { lane, filename } = request.ctx
+    const { lane: newLane, content: newContents } = request.body
 
-    const fileContent = await readFile(filePath, { encoding: 'utf-8' })
-    let updatedFilePath = filePath
-
-    const hasUpdatedContent = fileContent.trim() != updatedContent.trim()
-    if (hasUpdatedContent) {
-      updatedContent = request.logToTask(updatedContent, 'Updated task')
+    if (!fastify.config.laneKeys.includes(newLane)) {
+      throw new Error('Lane invalid')
     }
 
-    // move the file if the lane has changed
-    const hasUpdatedPath = currentLane != updatedLane
-    if (hasUpdatedPath) {
-      updatedFilePath = join(request.server.config.dirPath, updatedLane, filename)
-      updatedContent = request.logToTask(updatedContent, `Moved task to ${updatedLane}`)
+    try {
+      const { filePath, fileName } = await request.server.v2update({ lane, fileName: filename, newLane, newContents })
+
+      await request.commit(filePath, `task ${lane}/${fileName} updated`)
+      return reply.redirect(`/view/${newLane}/${fileName}`)
+    } catch (err) {
+      throw new Error(err)
     }
-
-    // Write file changes including new file if moved
-    await request.server.changeFile({
-      lane: updatedLane,
-      filename,
-      filePath: updatedFilePath,
-      contents: updatedContent
-    })
-
-    // delete the old file
-    if (hasUpdatedPath) {
-      await request.server.deleteFile({ filename, lane: currentLane, filePath })
-    }
-
-    await request.commit([filePath, updatedFilePath], `task ${updatedLane}/${filename} updated`)
-
-    return reply.redirect(`/view/${updatedLane}/${filename}`)
   })
 }

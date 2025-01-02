@@ -72,16 +72,10 @@ export default async function (fastify) {
       fastify.preHandlerParams,
     ]
   }, async (request, reply) => {
-    const { lane, filename, filePath } = request.ctx
+    const { lane, filename } = request.ctx
+    const { fileName, filePath } = await request.server.v2delete({ fileName: filename, lane })
 
-    const exists = await request.server.pathExists(filePath)
-    if (!exists) {
-      return reply.redirect('/')
-    }
-
-    await request.server.deleteFile({ filename, lane, filePath })
-
-    await request.commit(filePath, `task ${lane}/${filename} deleted`)
+    await request.commit(filePath, `task ${lane}/${fileName} deleted`)
 
     return reply.redirect('/')
   })
