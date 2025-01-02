@@ -17,4 +17,9 @@ export default fp(async function app (fastify, opts) {
     options: structuredClone(opts),
     autoHooks: true
   })
+
+  fastify.setNotFoundHandler({}, async (request, reply) => {
+    fastify.log.info('Request route not found')
+    reply.redirect('/')
+  })
 })
