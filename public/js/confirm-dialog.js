@@ -21,18 +21,6 @@ class ConfirmDialog extends HTMLElement {
     })
   }
 
-  disconnectedCallback() {
-
-  }
-
-  adoptedCallback() {
-
-  }
-
-  attributeChangedCallback() {
-
-  }
-
   handleEvent (event) {
     const current = window.location.href
 

@@ -31,8 +31,6 @@ class InfoDialog extends HTMLElement {
     document.removeEventListener(this.eventHotkey)
   }
 
-  // ---
-
   replaceWithButton (interactor) {
     interactor.classList.add('hidden')
 

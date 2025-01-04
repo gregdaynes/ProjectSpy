@@ -46,10 +46,6 @@ class TaskDialog extends HTMLElement {
     this.controller.signal.abort()
   }
 
-  adoptedCallback () { }
-
-  attributeChangedCallback () { }
-
   handleEvent (event) {
     if (event.type === 'close') {
       window.history.replaceState({}, '', '/')
