@@ -40,7 +40,9 @@
     </application-header>
 
     <application-wrapper>
-      <%~ it.body %>
+      <main>
+        <%~ include('lanes.html', it) %>
+      </main>
     </application-wrapper>
 
     <% if (it.viewDialog) { %>

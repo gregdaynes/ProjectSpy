@@ -51,7 +51,7 @@ export default async function (fastify) {
       confirmDialog: true,
     }
 
-    return reply.view('view', data)
+    return reply.view('app', data)
   })
 
   fastify.post('/archive/:lane/:filename', {

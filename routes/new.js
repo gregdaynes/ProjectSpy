@@ -75,6 +75,6 @@ export default async function (fastify) {
       viewDialog: true
     }
 
-    return reply.view('new', data)
+    return reply.view('app', data)
   })
 }

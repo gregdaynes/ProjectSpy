@@ -15,6 +15,6 @@ export default async function (fastify) {
       },
     }
 
-    return reply.view('home', data)
+    return reply.view('app', data)
   })
 }
