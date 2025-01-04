@@ -3,6 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const appHeader = document.querySelector('application-header')
   const tasks = document.querySelectorAll('task-l')
 
+  for (const task of tasks) {
+    const taskHeader = task.querySelector('task-header')
+    const taskBody = task.querySelector('task-body')
+
+    task.setAttribute('data-header-original', encodeURIComponent(taskHeader.innerHTML))
+    task.setAttribute('data-body-original', encodeURIComponent(taskBody.innerHTML))
+  }
+
   let filterData = document.getElementById('search-data')?.textContent
   if (!filterData) return
   filterData = JSON.parse(filterData)
@@ -33,14 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  field.addEventListener('input', (e) => {
-    if (e.target.value === '') {
-      tasks.forEach(task => task.classList.remove('hidden'))
+  field.addEventListener('keyup', (e) => handleFilterChange(e.target.value))
+  field.addEventListener('input', (e) => handleFilterChange(e.target.value))
+
+  function handleFilterChange (value) {
+    if (value === '') {
+      tasks.forEach(task => {
+        task.classList.remove('hidden')
+        highlight(task, value)
+      })
       return
     }
 
     const results = filterData.filter(([entry]) => {
-      return entry.includes(e.target.value.toLowerCase())
+      return entry.includes(value.toLowerCase())
     }).map(([, id]) => id)
 
     for (const task of tasks) {
@@ -50,24 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
         task.classList.add('hidden')
       } else {
         task.classList.remove('hidden')
-
-        const taskHeader = task.querySelector('task-header')
-        const taskBody = task.querySelector('task-body')
-
-        if (!task.hasAttribute('data-header-original')) {
-          task.setAttribute('data-header-original', taskHeader.innerHTML)
-        }
-
-        if (!task.hasAttribute('data-body-original')) {
-          task.setAttribute('data-body-original', taskBody.innerHTML)
-        }
-
-        const regex = new RegExp(e.target.value, 'ig')
-        taskHeader.innerHTML = task.getAttribute('data-header-original').replace(regex, '<mark>$&</mark>')
-        taskBody.innerHTML = task.getAttribute('data-body-original').replace(regex, '<mark>$&</mark>')
+        highlight(task, value)
       }
     }
-  })
+  }
+
+  function highlight (task, str) {
+    const taskHeader = task.querySelector('task-header')
+    const taskBody = task.querySelector('task-body')
+
+    const regex = new RegExp(str + '(?![^<]*>)', 'ig')
+    taskHeader.innerHTML = decodeURIComponent(task.getAttribute('data-header-original')).replace(regex, '<mark>$&</mark>')
+    taskBody.innerHTML = decodeURIComponent(task.getAttribute('data-body-original')).replace(regex, '<mark>$&</mark>')
+  }
 
   appHeader.appendChild(content)
 })
