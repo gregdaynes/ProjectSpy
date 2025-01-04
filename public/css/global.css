@@ -1,5 +1,5 @@
 @layer global {
-  :is(h1, h2, .h2, h3, .h3, h4, .h4) {
+  :is(h1, h2, h3) {
     font-family: var(--font-display);
     line-height: var(--leading-fine);
     text-wrap: balance;
@@ -9,27 +9,16 @@
     font-size: var(--step-2);
   }
 
-  h2, .h2 {
+  h2 {
     font-size: var(--step-4);
   }
 
-  h3, .h3 {
+  h3 {
     font-size: var(--step-3);
-  }
-
-  :is(h4, .h4, h5, .h5, h6, .h6) {
-    font-size: var(--step-2);
   }
 
   small {
     font-size: var(--step--1);
-  }
-
-  ins {
-    text-decoration: none;
-    background: var(--color-highlight);
-    color: var(--color-dark);
-    padding-inline: 0.3em;
   }
 
   :is(code, kbd, samp) {
@@ -71,10 +60,6 @@
   var {
     font-style: normal;
     font-weight: var(--font-medium);
-  }
-
-  q {
-    font-style: italic;
   }
 
   ul:not([class]) {
@@ -119,28 +104,6 @@
     margin-inline-start: 1.5ch;
   }
 
-  blockquote {
-    margin-inline: 0;
-    color: var(--color-dark);
-    font-size: var(--step-1);
-  }
-
-  blockquote footer {
-    margin-block-start: var(--space-s);
-    color: var(--color-primary);
-    font-size: var(--step-0);
-  }
-
-  blockquote q {
-    font-weight: var(--font-light);
-  }
-
-  figcaption {
-    padding-block-start: 0.5em;
-    font-size: var(--step-0);
-    font-family: var(--font-mono);
-  }
-
   table {
     border: var(--stroke);
     border-collapse: collapse;
@@ -178,21 +141,16 @@
     border-block-start: var(--stroke);
   }
 
-  caption {
-    caption-side: bottom;
-    margin-block-start: var(--space-s);
-  }
-
   a:not([class]):hover {
     text-underline-offset: 0.2lh;
   }
 
-  :is(h1, h2, h3, h4) a:not([class]) {
+  :is(h1, h2, h3) a:not([class]) {
     text-decoration-thickness: 0.1ex;
     text-underline-offset: 0.2ex;
   }
 
-  :is(h1, h2, h3, h4) a:not([class]):hover {
+  :is(h1, h2, h3) a:not([class]):hover {
     text-underline-offset: 0.3ex;
   }
 
