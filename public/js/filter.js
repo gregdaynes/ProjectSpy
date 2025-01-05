@@ -44,7 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
   field.addEventListener('keyup', (e) => handleFilterChange(e.target.value))
   field.addEventListener('input', (e) => handleFilterChange(e.target.value))
 
-  function handleFilterChange (value) {
+  const storedFilter = window.sessionStorage.getItem('filter')
+  if (storedFilter) {
+    handleFilterChange(storedFilter)
+    field.value = storedFilter
+  }
+
+  function handleFilterChange (value = '') {
+    window.sessionStorage.setItem('filter', value)
+
     if (value === '') {
       tasks.forEach(task => {
         task.classList.remove('hidden')
